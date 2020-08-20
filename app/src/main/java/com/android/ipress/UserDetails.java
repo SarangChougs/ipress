@@ -48,4 +48,8 @@ public class UserDetails {
     public void setKey(String key) {
         Key = key;
     }
+
+    static class Appliances{
+        int appliance1,appliance2;
+    }
 }
