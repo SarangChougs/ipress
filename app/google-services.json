@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "45791744919",
+    "firebase_url": "https://ipress-f96a8.firebaseio.com",
+    "project_id": "ipress-f96a8",
+    "storage_bucket": "ipress-f96a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45791744919:android:473c7e001fc5570a006ad2",
+        "android_client_info": {
+          "package_name": "com.android.ipress"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "45791744919-trng6pp79de2t13pa451oc3opra4uq3l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqWoF-5kcVAu1hQSd6-OsRJNsHOv3J7gU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "45791744919-trng6pp79de2t13pa451oc3opra4uq3l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

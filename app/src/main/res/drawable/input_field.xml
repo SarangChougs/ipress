@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--Login input field-->
+    <corners android:radius="15sp"/>
+        <solid android:color="#fefefa"/>
+    <stroke android:color="#000000" android:width="1dp"/>
+</shape>
