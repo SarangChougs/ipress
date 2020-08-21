@@ -51,6 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mBtnPressed = true;
+                //validation
                 if (mPasswordET.getText().toString().trim().equals(mConfirmPasswordET.getText().toString().trim())
                         && !mEmailET.getText().toString().trim().equals("")
                         && !mFullNameET.getText().toString().trim().equals("")
@@ -76,15 +77,16 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    //to check username availability
     public void checkUser(){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Registered Users").child(mUsernameET.getText().toString().toLowerCase());
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.child("email").getValue() == null){
-                    registerUser();
+                    registerUser(); //if username is available
                 }
-                else
+                else //if username isn't available then show toast message.
                     Toast.makeText(RegisterActivity.this, "Username already taken", Toast.LENGTH_SHORT).show();
             }
 
@@ -95,6 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    //register new user in the database
     public void registerUser() {
         final String fullName,email,username,password;
         fullName = mFullNameET.getText().toString().trim();

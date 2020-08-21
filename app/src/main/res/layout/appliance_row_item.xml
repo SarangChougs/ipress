@@ -71,7 +71,7 @@
 
                 <LinearLayout
                     android:id="@+id/ChangeBtn"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginBottom="7dp"
@@ -83,18 +83,14 @@
                     android:paddingBottom="5dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/change_state_text"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/baloo"
-                        android:text="Change State"
+                        android:gravity="center"
+                        android:text="OFF"
                         android:textColor="@color/app_primary_color"
                         android:textSize="15sp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
-                        android:src="@drawable/edit_vector_rv"/>
                 </LinearLayout>
 
                 <LinearLayout

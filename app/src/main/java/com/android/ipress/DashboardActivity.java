@@ -61,6 +61,7 @@ public class DashboardActivity extends AppCompatActivity {
         dialog = new Dialog(this);
         mAppliances = new ArrayList<>();
 
+        //floating action button to add new appliance
         floatingActionButton = findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +74,7 @@ public class DashboardActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         mApplianceName = NameET.getText().toString().trim().toLowerCase();
                         Log.d(TAG, "into add function");
+                        //to get the username for currently logged in user's username
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
                         reference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -83,6 +85,7 @@ public class DashboardActivity extends AppCompatActivity {
                                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
                                         Log.d(TAG, "" + email);
+                                        //add new appliance method call
                                         AddAppliances();
                                         break;
                                     }
@@ -103,6 +106,7 @@ public class DashboardActivity extends AppCompatActivity {
         setupRecyclerView();
     }
 
+    //add new appliance method definition
     public void AddAppliances() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances/" + mApplianceName);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -115,6 +119,7 @@ public class DashboardActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
+                                //update recycler view method call
                                 updateRecyclerView();
                             } else {
                                 Toast.makeText(DashboardActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -133,6 +138,7 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
+    //initialize recycler view variables
     public void setupRecyclerView() {
         mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -144,6 +150,7 @@ public class DashboardActivity extends AppCompatActivity {
         updateRecyclerView();
     }
 
+    //update UI with new data set
     public void updateRecyclerView() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
         reference.addValueEventListener(new ValueEventListener() {
@@ -185,6 +192,7 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
+    //custom recycler view adapter class
     public class ApplianceAdapter extends RecyclerView.Adapter<ApplianceAdapter.ApplianceViewHolder> {
 
         private Context mContext;
@@ -211,6 +219,11 @@ public class DashboardActivity extends AppCompatActivity {
 
             holder.NameTV.setText(Name);
             holder.StateTV.setText(State);
+            if(state == 1)
+                holder.ChangeLbl.setText("OFF");
+            else
+                holder.ChangeLbl.setText("ON");
+
             holder.ChangeBtnLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -233,7 +246,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         public class ApplianceViewHolder extends RecyclerView.ViewHolder {
 
-            public TextView NameTV, StateTV;
+            public TextView NameTV, StateTV, ChangeLbl;
             public LinearLayout ChangeBtnLayout;
             public LinearLayout RemoveBtnLayout;
 
@@ -241,12 +254,14 @@ public class DashboardActivity extends AppCompatActivity {
                 super(itemView);
                 NameTV = itemView.findViewById(R.id.text_view_name);
                 StateTV = itemView.findViewById(R.id.text_view_state);
+                ChangeLbl = itemView.findViewById(R.id.change_state_text);
                 ChangeBtnLayout = itemView.findViewById(R.id.ChangeBtn);
                 RemoveBtnLayout = itemView.findViewById(R.id.RemoveBtn);
             }
         }
     }
 
+    //method to change appliance state to ON/OFF on change button click
     public void changeApplianceStatus(int position){
         final ApplianceInfo applianceInfo = mAppliances.get(position);
         final String Name = applianceInfo.getName();
@@ -289,6 +304,7 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
+    //method to remove appliance on remove button click
     public void removeAppliance(int position){
         final ApplianceInfo applianceInfo = mAppliances.get(position);
         final String Name = applianceInfo.getName();

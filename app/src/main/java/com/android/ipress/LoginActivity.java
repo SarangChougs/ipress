@@ -31,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
 
         setupActivityVariables();
 
+        //to check if any user is already logged in
         if (mUser != null) {
             if(mUser.isEmailVerified()){
                 GlobalClass.CurrentUserEmail = mUser.getEmail();
@@ -38,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         }
+        //login method
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -47,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "Some fields are empty", Toast.LENGTH_SHORT).show();
             }
         });
+        //register new user
         mSignUpTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
