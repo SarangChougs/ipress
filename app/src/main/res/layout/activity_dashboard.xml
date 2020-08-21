@@ -19,7 +19,7 @@
 
     <LinearLayout
         android:id="@+id/LogoutBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical">
@@ -36,8 +36,31 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/baloo"
             android:text="Sign out"
+            android:layout_gravity="center_horizontal"
             android:textColor="@color/app_primary_color"
             android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/Appliance1Lbl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="Appliance 1"
+            android:textColor="@color/app_primary_color"
+            android:fontFamily="@font/baloo"
+            android:textSize="19sp"/>
+
+        <Button
+            android:id="@+id/Appliance1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="ON"
+            android:fontFamily="@font/baloo"
+            android:textSize="18sp"
+            android:background="@color/app_primary_color"/>
     </LinearLayout>
 
 </RelativeLayout>

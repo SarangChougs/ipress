@@ -30,6 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mDatabaseReference;
+    boolean mBtnPressed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mBtnPressed = true;
                 if (mPasswordET.getText().toString().trim().equals(mConfirmPasswordET.getText().toString().trim())
                         && !mEmailET.getText().toString().trim().equals("")
                         && !mFullNameET.getText().toString().trim().equals("")
@@ -79,8 +81,10 @@ public class RegisterActivity extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.child("email").getValue() == null)
-                    registerUser();
+                if(snapshot.child("email").getValue() == null){
+                    if(mBtnPressed)
+                        registerUser();
+                }
                 else
                     Toast.makeText(RegisterActivity.this, "Username already taken", Toast.LENGTH_SHORT).show();
             }
@@ -115,6 +119,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if(task.isSuccessful()){
                                                         mAuth.signOut();
+                                                        mBtnPressed = false;
                                                         Toast.makeText(RegisterActivity.this, "Registration successful, please verify your account", Toast.LENGTH_SHORT).show();
                                                         startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                                                         finish();
