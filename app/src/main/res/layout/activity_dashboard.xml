@@ -34,8 +34,7 @@
         android:layout_margin="32dp"
         android:layout_above="@id/LogoutBtn"
         android:src="@drawable/add_button_asset"
-        android:background="@drawable/roundshape"
-        app:backgroundTint="#61C5B9" />
+        app:backgroundTint="@color/app_primary_color" />
 
     <LinearLayout
         android:id="@+id/LogoutBtn"
