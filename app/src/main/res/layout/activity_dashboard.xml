@@ -8,20 +8,40 @@
     tools:context=".DashboardActivity">
 
     <TextView
+        android:id="@+id/dashboard_lbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/baloo"
-        android:text="Dashboard"
+        android:text="My Appliances"
         android:textColor="@color/app_primary_color"
         android:textSize="25sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/dashboard_lbl"
+        android:layout_above="@id/LogoutBtn"
+        android:layout_margin="5dp"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_margin="32dp"
+        android:layout_above="@id/LogoutBtn"
+        android:src="@drawable/add_button_asset"
+        android:background="@drawable/roundshape"
+        app:backgroundTint="#61C5B9" />
 
     <LinearLayout
         android:id="@+id/LogoutBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
         <ImageView
@@ -39,28 +59,6 @@
             android:layout_gravity="center_horizontal"
             android:textColor="@color/app_primary_color"
             android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/Appliance1Lbl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:text="Appliance 1"
-            android:textColor="@color/app_primary_color"
-            android:fontFamily="@font/baloo"
-            android:textSize="19sp"/>
-
-        <Button
-            android:id="@+id/Appliance1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:text="ON"
-            android:fontFamily="@font/baloo"
-            android:textSize="18sp"
-            android:background="@color/app_primary_color"/>
     </LinearLayout>
 
 </RelativeLayout>

@@ -78,12 +78,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void checkUser(){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Registered Users").child(mUsernameET.getText().toString().toLowerCase());
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.child("email").getValue() == null){
-                    if(mBtnPressed)
-                        registerUser();
+                    registerUser();
                 }
                 else
                     Toast.makeText(RegisterActivity.this, "Username already taken", Toast.LENGTH_SHORT).show();
