@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +28,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.database.core.view.Change;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -205,7 +203,7 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ApplianceViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ApplianceViewHolder holder, final int position) {
             ApplianceInfo applianceInfo = mAppliances.get(position);
             String Name = applianceInfo.getName();
             int state = applianceInfo.getState();
@@ -213,6 +211,19 @@ public class DashboardActivity extends AppCompatActivity {
 
             holder.NameTV.setText(Name);
             holder.StateTV.setText(State);
+            holder.ChangeBtnLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    changeApplianceStatus(position);
+                }
+            });
+
+            holder.RemoveBtnLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeAppliance(position);
+                }
+            });
         }
 
         @Override
@@ -224,15 +235,93 @@ public class DashboardActivity extends AppCompatActivity {
 
             public TextView NameTV, StateTV;
             public LinearLayout ChangeBtnLayout;
-            public LinearLayout RemoveImageBtn;
+            public LinearLayout RemoveBtnLayout;
 
             public ApplianceViewHolder(View itemView) {
                 super(itemView);
                 NameTV = itemView.findViewById(R.id.text_view_name);
                 StateTV = itemView.findViewById(R.id.text_view_state);
                 ChangeBtnLayout = itemView.findViewById(R.id.ChangeBtn);
-                RemoveImageBtn = itemView.findViewById(R.id.RemoveBtn);
+                RemoveBtnLayout = itemView.findViewById(R.id.RemoveBtn);
             }
         }
+    }
+
+    public void changeApplianceStatus(int position){
+        final ApplianceInfo applianceInfo = mAppliances.get(position);
+        final String Name = applianceInfo.getName();
+        int State = applianceInfo.getState();
+        if (State == 0)
+            State = 1;
+        else
+            State = 0;
+        applianceInfo.setState(String.valueOf(State));
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    String email = dataSnapshot.child("email").getValue().toString();
+                    Log.d(TAG, " change button : username search loop");
+                    if (email.equals(GlobalClass.CurrentUserEmail)) {
+                        mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
+                        Log.d(TAG, "changed by :" + email);
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances");
+                        reference1.child(Name).setValue(applianceInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(DashboardActivity.this, Name + " State changed successfully", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(DashboardActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void removeAppliance(int position){
+        final ApplianceInfo applianceInfo = mAppliances.get(position);
+        final String Name = applianceInfo.getName();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    String email = dataSnapshot.child("email").getValue().toString();
+                    Log.d(TAG, " remove button : username search loop");
+                    if (email.equals(GlobalClass.CurrentUserEmail)) {
+                        mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
+                        Log.d(TAG, "removed by :" + email);
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances");
+                        reference1.child(Name).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(DashboardActivity.this, Name + " removed successfully", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(DashboardActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }
