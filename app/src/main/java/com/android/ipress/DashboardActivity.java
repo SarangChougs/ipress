@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -247,7 +248,7 @@ public class DashboardActivity extends AppCompatActivity {
         public class ApplianceViewHolder extends RecyclerView.ViewHolder {
 
             public TextView NameTV, StateTV, ChangeLbl;
-            public LinearLayout ChangeBtnLayout;
+            public RelativeLayout ChangeBtnLayout;
             public LinearLayout RemoveBtnLayout;
 
             public ApplianceViewHolder(View itemView) {

@@ -3,8 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardElevation="8dp">
+    app:cardElevation="8dp"
+    android:elevation="8dp"
+    app:cardCornerRadius="2dp">
 
     <LinearLayout
         android:id="@+id/ItemLayout"
@@ -16,6 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:padding="8dp"
             android:orientation="vertical">
 
             <TextView
@@ -60,68 +62,43 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
+            android:layout_height="match_parent">
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/ChangeBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/download_btn"
                 android:layout_centerInParent="true"
-                android:orientation="vertical">
+                android:paddingLeft="30dp"
+                android:paddingTop="5dp"
+                android:paddingRight="30dp"
+                android:paddingBottom="5dp">
 
-                <LinearLayout
-                    android:id="@+id/ChangeBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginBottom="7dp"
-                    android:background="@drawable/download_btn"
-                    android:orientation="horizontal"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="5dp"
-                    android:paddingRight="10dp"
-                    android:paddingBottom="5dp">
-
-                    <TextView
-                        android:id="@+id/change_state_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/baloo"
-                        android:gravity="center"
-                        android:text="OFF"
-                        android:textColor="@color/app_primary_color"
-                        android:textSize="15sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/RemoveBtn"
+                <TextView
+                    android:id="@+id/change_state_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="7dp"
-                    android:background="@drawable/download_btn"
-                    android:orientation="horizontal"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="5dp"
-                    android:paddingRight="10dp"
-                    android:paddingBottom="5dp">
+                    android:fontFamily="@font/baloo"
+                    android:gravity="center"
+                    android:text="OFF"
+                    android:textColor="@color/app_primary_color"
+                    android:textSize="16sp" />
+            </RelativeLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/baloo"
-                        android:text="Remove"
-                        android:textColor="@color/app_primary_color"
-                        android:textSize="15sp" />
+            <LinearLayout
+                android:id="@+id/RemoveBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/delete_drawable"
+                android:layout_alignParentRight="true"
+                android:layout_margin="3dp"
+                android:padding="5dp">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/remove_vector" />
-                </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/delete_vector_new" />
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
