@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardElevation="8dp"
+    android:layout_margin="8dp"
     android:elevation="8dp"
-    app:cardCornerRadius="2dp">
+    app:cardCornerRadius="2dp"
+    app:cardElevation="8dp">
 
     <LinearLayout
         android:id="@+id/ItemLayout"
@@ -17,8 +18,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:padding="8dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/text_view_name"
@@ -64,35 +65,29 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
+            <Button
                 android:id="@+id/ChangeBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/download_btn"
                 android:layout_centerInParent="true"
+                android:background="@drawable/state_on_drawable"
+                android:elevation="8dp"
+                android:fontFamily="@font/baloo"
                 android:paddingLeft="30dp"
-                android:paddingTop="5dp"
+                android:paddingTop="4dp"
                 android:paddingRight="30dp"
-                android:paddingBottom="5dp">
-
-                <TextView
-                    android:id="@+id/change_state_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/baloo"
-                    android:gravity="center"
-                    android:text="OFF"
-                    android:textColor="@color/app_primary_color"
-                    android:textSize="16sp" />
-            </RelativeLayout>
+                android:paddingBottom="4dp"
+                android:text="ON"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:id="@+id/RemoveBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/delete_drawable"
                 android:layout_alignParentRight="true"
                 android:layout_margin="3dp"
+                android:background="@drawable/delete_drawable"
                 android:padding="5dp">
 
                 <ImageView

@@ -22,17 +22,17 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/dashboard_lbl"
         android:layout_above="@id/LogoutBtn"
-        android:layout_margin="5dp"/>
+        android:layout_below="@id/dashboard_lbl"
+        android:layout_margin="5dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@id/LogoutBtn"
         android:layout_alignParentRight="true"
         android:layout_margin="32dp"
-        android:layout_above="@id/LogoutBtn"
         android:src="@drawable/add_button_asset"
         app:backgroundTint="@color/app_primary_color" />
 
@@ -46,16 +46,16 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/logout_vector"
             android:layout_gravity="center_horizontal"
+            android:src="@drawable/logout_vector"
             app:tint="@color/app_primary_color" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:fontFamily="@font/baloo"
             android:text="Sign out"
-            android:layout_gravity="center_horizontal"
             android:textColor="@color/app_primary_color"
             android:textSize="20sp" />
     </LinearLayout>

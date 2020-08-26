@@ -11,12 +11,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -220,12 +220,17 @@ public class DashboardActivity extends AppCompatActivity {
 
             holder.NameTV.setText(Name);
             holder.StateTV.setText(State);
-            if(state == 1)
-                holder.ChangeLbl.setText("OFF");
-            else
-                holder.ChangeLbl.setText("ON");
+            if (state == 1) {
+                holder.ChangeBtn.setText("OFF");
+                holder.ChangeBtn.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.white));
+                holder.ChangeBtn.setBackground(ContextCompat.getDrawable(DashboardActivity.this, R.drawable.state_off_drawable));
+            } else {
+                holder.ChangeBtn.setText("ON");
+                holder.ChangeBtn.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.rich_black));
+                holder.ChangeBtn.setBackground(ContextCompat.getDrawable(DashboardActivity.this, R.drawable.state_on_drawable));
+            }
 
-            holder.ChangeBtnLayout.setOnClickListener(new View.OnClickListener() {
+            holder.ChangeBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     changeApplianceStatus(position);
@@ -247,23 +252,22 @@ public class DashboardActivity extends AppCompatActivity {
 
         public class ApplianceViewHolder extends RecyclerView.ViewHolder {
 
-            public TextView NameTV, StateTV, ChangeLbl;
-            public RelativeLayout ChangeBtnLayout;
+            public TextView NameTV, StateTV;
+            public Button ChangeBtn;
             public LinearLayout RemoveBtnLayout;
 
             public ApplianceViewHolder(View itemView) {
                 super(itemView);
                 NameTV = itemView.findViewById(R.id.text_view_name);
                 StateTV = itemView.findViewById(R.id.text_view_state);
-                ChangeLbl = itemView.findViewById(R.id.change_state_text);
-                ChangeBtnLayout = itemView.findViewById(R.id.ChangeBtn);
+                ChangeBtn = itemView.findViewById(R.id.ChangeBtn);
                 RemoveBtnLayout = itemView.findViewById(R.id.RemoveBtn);
             }
         }
     }
 
     //method to change appliance state to ON/OFF on change button click
-    public void changeApplianceStatus(int position){
+    public void changeApplianceStatus(int position) {
         final ApplianceInfo applianceInfo = mAppliances.get(position);
         final String Name = applianceInfo.getName();
         int State = applianceInfo.getState();
@@ -286,9 +290,7 @@ public class DashboardActivity extends AppCompatActivity {
                         reference1.child(Name).setValue(applianceInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(DashboardActivity.this, Name + " State changed successfully", Toast.LENGTH_SHORT).show();
-                                }else{
+                                if (!task.isSuccessful()) {
                                     Toast.makeText(DashboardActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -306,7 +308,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     //method to remove appliance on remove button click
-    public void removeAppliance(int position){
+    public void removeAppliance(int position) {
         final ApplianceInfo applianceInfo = mAppliances.get(position);
         final String Name = applianceInfo.getName();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
@@ -323,9 +325,7 @@ public class DashboardActivity extends AppCompatActivity {
                         reference1.child(Name).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(DashboardActivity.this, Name + " removed successfully", Toast.LENGTH_SHORT).show();
-                                }else{
+                                if (!task.isSuccessful()) {
                                     Toast.makeText(DashboardActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
