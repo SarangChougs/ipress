@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".SplashScreen">
 
     <RelativeLayout
@@ -17,10 +18,10 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/app_icon_colony" />
+                android:src="@drawable/just_logo_splash" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -29,7 +30,6 @@
                 android:gravity="center_horizontal"
                 android:text="iPress"
                 android:textColor="@color/black"
-                android:paddingTop="20dp"
                 android:textSize="35sp" />
 
             <RelativeLayout
