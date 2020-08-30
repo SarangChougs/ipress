@@ -3,10 +3,14 @@ package com.android.ipress;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -28,12 +32,13 @@ import com.google.firebase.database.ValueEventListener;
 public class LoginActivity extends AppCompatActivity {
 
     EditText mUsernameET, mPasswordET;
-    TextView mSignUpTV;
+    TextView mSignUpTV, mForgotPasswordBtn;
     Button mLoginBtn;
     FirebaseAuth mAuth;
     FirebaseUser mUser;
     DatabaseReference mDatabaseRef;
     String mUID, mPassword;
+    Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,14 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "Some fields are empty", Toast.LENGTH_SHORT).show();
             }
         });
+
+        mForgotPasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setupForgotPasswordDialog();
+            }
+        });
+
         //register new user
         mSignUpTV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordET = findViewById(R.id.PasswordET);
         mSignUpTV = findViewById(R.id.sign_up_btn);
         mLoginBtn = findViewById(R.id.LoginBtn);
+        mForgotPasswordBtn = findViewById(R.id.ForgotPasswordBtn);
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
     }
@@ -150,5 +164,74 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString("username", mUID);
         editor.putString("Password", mPassword);
         editor.commit();
+    }
+
+    public void setupForgotPasswordDialog() {
+        dialog = new Dialog(LoginActivity.this);
+        dialog.setContentView(R.layout.forgot_password_dialog);
+        final EditText editText = dialog.findViewById(R.id.EmailField);
+        final Button reset = dialog.findViewById(R.id.ResetBtn);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() == 0) {
+                    reset.setClickable(false);
+                    reset.setAlpha((float) 0.15);
+                } else {
+                    reset.setAlpha(1);
+                    reset.setClickable(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String EnteredEmail = editText.getText().toString().trim();
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int flag = 0;
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            String email = dataSnapshot.child("email").getValue().toString();
+                            if (email.equals(EnteredEmail)) {
+                                flag = 1;
+                                mAuth.sendPasswordResetEmail(EnteredEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(LoginActivity.this, "Reset link sent to email", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        } else {
+                                            Toast.makeText(LoginActivity.this, "Error sending reset link", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                        if (flag == 0) {
+                            Toast.makeText(LoginActivity.this, "Account doesn't exist with this email", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
+        dialog.show();
     }
 }
