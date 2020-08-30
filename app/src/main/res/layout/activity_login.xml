@@ -78,7 +78,7 @@
                     android:src="@drawable/user_vector" />
 
                 <EditText
-                    android:id="@+id/EmailET"
+                    android:id="@+id/UsernameET"
                     android:layout_width="wrap_content"
                     android:layout_height="56dp"
                     android:layout_marginLeft="30dp"
@@ -164,12 +164,37 @@
                 </RelativeLayout>
             </RelativeLayout>
 
+            <LinearLayout
+                android:id="@+id/rem_me_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/PasswordLayout"
+                android:layout_marginTop="7dp"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/RememberMe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleX="1.2"
+                android:scaleY="1.2" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/baloo"
+                android:text="Remember me"
+                android:textColor="@color/rich_black"
+                android:textSize="17sp" />
+            </LinearLayout>
+
             <RelativeLayout
                 android:id="@+id/LoginButtonLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/FailureResponseMsgLayout"
-                android:layout_marginTop="10dp"
+                android:layout_below="@id/rem_me_layout"
+                android:layout_marginTop="7dp"
                 android:layout_marginBottom="10dp">
 
                 <Button
