@@ -18,13 +18,18 @@
         android:textColor="@color/app_primary_color"
         android:textSize="25sp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <GridView
+        android:id="@+id/SampleGridView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/LogoutBtn"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:columnWidth="120dp"
         android:layout_below="@id/dashboard_lbl"
-        android:layout_margin="5dp" />
+        android:layout_above="@id/LogoutBtn"
+        android:horizontalSpacing="5dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="5dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -38,9 +43,10 @@
 
     <LinearLayout
         android:id="@+id/LogoutBtn"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:orientation="vertical">
 
         <ImageView

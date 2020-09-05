@@ -8,17 +8,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,7 +40,7 @@ public class DashboardActivity extends AppCompatActivity {
     FloatingActionButton floatingActionButton;
     Dialog dialog;
     String mApplianceName;
-    RecyclerView mRecyclerView;
+    GridView mGridView;
     ApplianceAdapter mAdapter;
 
     @Override
@@ -104,7 +103,7 @@ public class DashboardActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
-        setupRecyclerView();
+        setupGridView();
     }
 
     //add new appliance method definition
@@ -121,7 +120,7 @@ public class DashboardActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 //update recycler view method call
-                                updateRecyclerView();
+                                updateGridView();
                             } else {
                                 Toast.makeText(DashboardActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
@@ -139,20 +138,14 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    //initialize recycler view variables
-    public void setupRecyclerView() {
-        mRecyclerView = findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mAdapter = new ApplianceAdapter(DashboardActivity.this, mAppliances);
-
-        mRecyclerView.setAdapter(mAdapter);
-        updateRecyclerView();
+    //initialize grid view
+    public void setupGridView() {
+        mGridView = findViewById(R.id.SampleGridView);
+        updateGridView();
     }
 
     //update UI with new data set
-    public void updateRecyclerView() {
+    public void updateGridView() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -166,14 +159,14 @@ public class DashboardActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 Log.d(TAG, "onDataChange: " + snapshot);
-                                mAppliances.clear();
                                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                                     ApplianceInfo applianceInfo = new ApplianceInfo();
                                     applianceInfo.setName(postSnapshot.child("name").getValue().toString());
                                     applianceInfo.setState(postSnapshot.child("state").getValue().toString());
                                     mAppliances.add(applianceInfo);
                                 }
-                                mAdapter.notifyDataSetChanged();
+                                mAdapter = new ApplianceAdapter(DashboardActivity.this, mAppliances);
+                                mGridView.setAdapter(mAdapter);
                             }
 
                             @Override
@@ -193,76 +186,46 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    //custom recycler view adapter class
-    public class ApplianceAdapter extends RecyclerView.Adapter<ApplianceAdapter.ApplianceViewHolder> {
+    public class ApplianceAdapter extends BaseAdapter {
 
-        private Context mContext;
-        private List<ApplianceInfo> mAppliances;
+        Context mContext;
+        List<ApplianceInfo> list;
 
-        public ApplianceAdapter(Context context, List<ApplianceInfo> List) {
-            this.mContext = context;
-            this.mAppliances = List;
-        }
-
-        @NonNull
-        @Override
-        public ApplianceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(mContext).inflate(R.layout.appliance_row_item, parent, false);
-            return new ApplianceViewHolder(v);
+        public ApplianceAdapter(Context mContext, List<ApplianceInfo> list) {
+            this.mContext = mContext;
+            this.list = list;
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ApplianceViewHolder holder, final int position) {
-            ApplianceInfo applianceInfo = mAppliances.get(position);
-            String Name = applianceInfo.getName();
-            int state = applianceInfo.getState();
-            String State = GlobalClass.StateMap.get(state);
+        public int getCount() {
+            return list.size();
+        }
 
-            holder.NameTV.setText(Name);
-            holder.StateTV.setText(State);
-            if (state == 1) {
-                holder.ChangeBtn.setText("OFF");
-                holder.ChangeBtn.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.white));
-                holder.ChangeBtn.setBackground(ContextCompat.getDrawable(DashboardActivity.this, R.drawable.state_off_drawable));
+        @Override
+        public Object getItem(int position) {
+            return list.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View grid;
+            LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            ApplianceInfo info = list.get(position);
+            if (convertView == null) {
+                grid = layoutInflater.inflate(R.layout.grid_item, null);
+                TextView StudentNameTV = grid.findViewById(R.id.v1);
+                TextView StudentEmailTV = grid.findViewById(R.id.v2);
+                StudentNameTV.setText(info.getName());
+                StudentEmailTV.setText(GlobalClass.StateMap.get(info.getState()));
             } else {
-                holder.ChangeBtn.setText("ON");
-                holder.ChangeBtn.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.rich_black));
-                holder.ChangeBtn.setBackground(ContextCompat.getDrawable(DashboardActivity.this, R.drawable.state_on_drawable));
+                grid = convertView;
             }
-
-            holder.ChangeBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    changeApplianceStatus(position);
-                }
-            });
-
-            holder.RemoveBtnLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    removeAppliance(position);
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mAppliances.size();
-        }
-
-        public class ApplianceViewHolder extends RecyclerView.ViewHolder {
-
-            public TextView NameTV, StateTV;
-            public Button ChangeBtn;
-            public LinearLayout RemoveBtnLayout;
-
-            public ApplianceViewHolder(View itemView) {
-                super(itemView);
-                NameTV = itemView.findViewById(R.id.text_view_name);
-                StateTV = itemView.findViewById(R.id.text_view_state);
-                ChangeBtn = itemView.findViewById(R.id.ChangeBtn);
-                RemoveBtnLayout = itemView.findViewById(R.id.RemoveBtn);
-            }
+            return grid;
         }
     }
 
