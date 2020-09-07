@@ -22,14 +22,13 @@
         android:id="@+id/SampleGridView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:columnWidth="120dp"
+        android:layout_margin="10dp"
         android:layout_below="@id/dashboard_lbl"
         android:layout_above="@id/LogoutBtn"
-        android:horizontalSpacing="5dp"
-        android:numColumns="auto_fit"
+        android:horizontalSpacing="25dp"
+        android:numColumns="2"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="5dp" />
+        android:verticalSpacing="25dp"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

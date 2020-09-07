@@ -12,12 +12,14 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -118,10 +120,7 @@ public class DashboardActivity extends AppCompatActivity {
                     reference1.child(mApplianceName).setValue(applianceInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                //update recycler view method call
-                                updateGridView();
-                            } else {
+                            if (!task.isSuccessful()) {
                                 Toast.makeText(DashboardActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -159,6 +158,7 @@ public class DashboardActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 Log.d(TAG, "onDataChange: " + snapshot);
+                                mAppliances.clear();
                                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                                     ApplianceInfo applianceInfo = new ApplianceInfo();
                                     applianceInfo.setName(postSnapshot.child("name").getValue().toString());
@@ -212,16 +212,46 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View grid;
             LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             ApplianceInfo info = list.get(position);
             if (convertView == null) {
                 grid = layoutInflater.inflate(R.layout.grid_item, null);
-                TextView StudentNameTV = grid.findViewById(R.id.v1);
-                TextView StudentEmailTV = grid.findViewById(R.id.v2);
-                StudentNameTV.setText(info.getName());
-                StudentEmailTV.setText(GlobalClass.StateMap.get(info.getState()));
+                ImageView DeleteBtn, ApplianceIcon;
+                Button ChangeBtn;
+                TextView ApplianceName;
+                ApplianceIcon = grid.findViewById(R.id.ApplianceIcon);
+                DeleteBtn = grid.findViewById(R.id.DeleteBtn);
+                ApplianceName = grid.findViewById(R.id.ApplianceName);
+                ChangeBtn = grid.findViewById(R.id.ChangeBtn);
+
+                if(info.getState() == 1){
+                    ApplianceIcon.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),R.drawable.flash_on_vector));
+                    ChangeBtn.setText("OFF");
+                    ChangeBtn.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.grid_off_btn_drawable));
+                    ChangeBtn.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.rich_black));
+                }else{
+                    ApplianceIcon.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),R.drawable.flash_off_vector));
+                    ChangeBtn.setText("ON");
+                    ChangeBtn.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.grid_on_btn_drawable));
+                    ChangeBtn.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.app_primary_color));
+                }
+                ApplianceName.setText(info.getName());
+
+                ChangeBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        changeApplianceStatus(position);
+                    }
+                });
+
+                DeleteBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        removeAppliance(position);
+                    }
+                });
             } else {
                 grid = convertView;
             }

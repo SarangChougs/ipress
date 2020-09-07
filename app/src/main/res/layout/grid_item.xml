@@ -3,35 +3,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
     android:background="@color/white"
     app:cardElevation="5dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
+        android:orientation="vertical"
         android:padding="5dp">
 
-        <TextView
-            android:id="@+id/v1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:fontFamily="@font/baloo"
-            android:text="fefwefwe"
-            android:textColor="@color/dim_gray"
-            android:textSize="15sp" />
+        <ImageView
+            android:id="@+id/ApplianceIcon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/flash_on_vector"
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true" />
+
+        <ImageView
+            android:id="@+id/DeleteBtn"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/delete_cross_vector"
+            android:layout_alignParentRight="true"
+            app:tint="@color/darker_grey"
+            android:rotation="45"/>
 
         <TextView
-            android:id="@+id/v2"
-            android:layout_width="wrap_content"
+            android:id="@+id/ApplianceName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/v1"
-            android:layout_centerHorizontal="true"
+            android:text="ApplianceName"
+            android:gravity="center"
+            android:layout_margin="3dp"
             android:fontFamily="@font/baloo"
-            android:text="Appliance 1"
-            android:textColor="@color/darker_grey"
-            android:textSize="14sp" />
+            android:textColor="@color/rich_black"
+            android:layout_below="@id/ApplianceIcon"/>
+
+        <Button
+            android:id="@+id/ChangeBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:textColor="@color/rich_black"
+            android:text="OFF"
+            android:layout_below="@id/ApplianceName"
+            android:layout_margin="10dp"
+            android:fontFamily="@font/baloo"
+            android:textSize="17sp"
+            android:background="@drawable/grid_off_btn_drawable"/>
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
