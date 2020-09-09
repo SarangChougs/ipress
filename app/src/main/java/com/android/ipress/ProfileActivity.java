@@ -100,7 +100,7 @@ public class ProfileActivity extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 Log.d(TAG, "onDataChange: " + snapshot);
                                 String name = snapshot.child("fullName").getValue().toString();
-                                String FileUrl = snapshot.child("PicUrl").getValue().toString();
+                                String FileUrl = snapshot.child("picUrl").getValue().toString();
                                 NameTV.setText(name);
                                 EmailTV.setText(GlobalClass.CurrentUserEmail);
                                 UsernameTV.setText(mUsername);
@@ -144,32 +144,33 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void updateProfilePic() {
         mUsername = UsernameTV.getText().toString();
-        String FileName = mUsername + System.currentTimeMillis() + "." + getFileExtension(mImageUri);
+        String FileName = mUsername + "_profile_pic." + getFileExtension(mImageUri);
         StorageReference storageReference = FirebaseStorage.getInstance().getReference("profile_pictures/" + mUsername + "/" + FileName);
         storageReference.putFile(mImageUri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                String FileUrl = uri.toString();
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users/" + mUsername + "/PicUrl");
-                                reference.setValue(FileUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        taskSnapshot.getMetadata().getReference().getDownloadUrl()
+                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()){
-                                            Toast.makeText(ProfileActivity.this, "Profile Pic updated successfully", Toast.LENGTH_SHORT).show();
-                                            mEditPic.setText("Choose picture");
-                                        }
-                                        else{
-                                            Toast.makeText(ProfileActivity.this, "Failed to update profile picture", Toast.LENGTH_SHORT).show();
-                                            mEditPic.setText("Update");
-                                        }
+                                    public void onSuccess(Uri uri) {
+                                        String FileUrl = uri.toString();
+                                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users/" + mUsername + "/picUrl");
+                                        reference.setValue(FileUrl)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Toast.makeText(ProfileActivity.this, "Profile Pic updated successfully", Toast.LENGTH_SHORT).show();
+                                                            mEditPic.setText("Choose picture");
+                                                        } else {
+                                                            Toast.makeText(ProfileActivity.this, "Failed to update profile picture", Toast.LENGTH_SHORT).show();
+                                                            mEditPic.setText("Update");
+                                                        }
+                                                    }
+                                                });
                                     }
                                 });
-                            }
-                        });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -201,6 +202,11 @@ public class ProfileActivity extends AppCompatActivity {
                         startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
+                    case R.id.favourite:
+                        ActivityStack.push("Profile");
+                        startActivity(new Intent(getApplicationContext(), FavouritesActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
                 }
                 return false;
             }
@@ -214,10 +220,14 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
                 overridePendingTransition(0, 0);
                 break;
+            case "Favourites":
+                startActivity(new Intent(getApplicationContext(), FavouritesActivity.class));
+                overridePendingTransition(0, 0);
+                break;
         }
     }
 
-    public void setupLogOutBtn(){
+    public void setupLogOutBtn() {
         LinearLayout Logout = findViewById(R.id.LogoutBtn);
         Logout.setOnClickListener(new View.OnClickListener() {
             @Override

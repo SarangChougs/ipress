@@ -10,9 +10,9 @@ public class UserDetails {
     }
 
     public UserDetails(String fullName, String email, String username, String PicUrl) {
-        FullName = fullName;
-        Email = email;
-        Username = username;
+        this.FullName = fullName;
+        this.Email = email;
+        this.Username = username;
         this.PicUrl = PicUrl;
     }
 

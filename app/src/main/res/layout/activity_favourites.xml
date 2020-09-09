@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/rich_black"
+    tools:context=".FavouritesActivity">
+
+
+    <TextView
+        android:id="@+id/favourites_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/baloo"
+        android:text="Favourites"
+        android:textColor="@color/app_primary_color"
+        android:textSize="25sp" />
+
+    <GridView
+        android:id="@+id/SampleGridView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/favourites_lbl"
+        android:layout_above="@id/nav_bar"
+        android:layout_margin="10dp"
+        android:horizontalSpacing="25dp"
+        android:numColumns="2"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="25dp" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/app_primary_color"
+        app:itemBackground="@color/app_primary_color"
+        app:itemIconTint="@color/rich_black"
+        app:itemTextColor="@color/rich_black"
+        app:menu="@menu/bottom_navigation_menu" />
+
+</RelativeLayout>

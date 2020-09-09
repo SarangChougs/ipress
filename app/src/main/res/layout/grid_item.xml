@@ -21,6 +21,12 @@
             android:layout_centerHorizontal="true" />
 
         <ImageView
+            android:id="@+id/FavouriteBtn"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/favourite_not_selected"/>
+
+        <ImageView
             android:id="@+id/DeleteBtn"
             android:layout_width="35dp"
             android:layout_height="35dp"

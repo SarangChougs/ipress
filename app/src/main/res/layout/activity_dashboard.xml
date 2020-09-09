@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_below="@id/dashboard_lbl"
+        android:layout_above="@id/nav_bar"
         android:horizontalSpacing="25dp"
         android:numColumns="2"
         android:stretchMode="columnWidth"
