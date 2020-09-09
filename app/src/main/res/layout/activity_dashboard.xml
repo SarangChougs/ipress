@@ -24,7 +24,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_below="@id/dashboard_lbl"
-        android:layout_above="@id/LogoutBtn"
         android:horizontalSpacing="25dp"
         android:numColumns="2"
         android:stretchMode="columnWidth"
@@ -34,18 +33,28 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/LogoutBtn"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/nav_bar"
         android:layout_margin="32dp"
         android:src="@drawable/add_button_asset"
         app:backgroundTint="@color/app_primary_color" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/app_primary_color"
+        app:itemBackground="@color/app_primary_color"
+        app:itemIconTint="@color/rich_black"
+        app:itemTextColor="@color/rich_black"
+        app:menu="@menu/bottom_navigation_menu" />
 
     <LinearLayout
         android:id="@+id/LogoutBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:visibility="gone"
         android:orientation="vertical">
 
         <ImageView

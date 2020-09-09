@@ -3,9 +3,13 @@ package com.android.ipress;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -23,6 +27,7 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -40,7 +45,7 @@ public class DashboardActivity extends AppCompatActivity {
     String mLoggedInUsername;
     List<ApplianceInfo> mAppliances;
     FloatingActionButton floatingActionButton;
-    Dialog dialog;
+    Dialog mDialog;
     String mApplianceName;
     GridView mGridView;
     ApplianceAdapter mAdapter;
@@ -60,7 +65,7 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-        dialog = new Dialog(this);
+        mDialog = new Dialog(this);
         mAppliances = new ArrayList<>();
 
         //floating action button to add new appliance
@@ -68,9 +73,10 @@ public class DashboardActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.setContentView(R.layout.appliance_name_getter);
-                final EditText NameET = dialog.findViewById(R.id.NameET);
-                Button Add = dialog.findViewById(R.id.AddBtn);
+                mDialog.setContentView(R.layout.appliance_name_getter);
+                mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                final EditText NameET = mDialog.findViewById(R.id.NameET);
+                Button Add = mDialog.findViewById(R.id.AddBtn);
                 Add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -99,13 +105,15 @@ public class DashboardActivity extends AppCompatActivity {
 
                             }
                         });
-                        dialog.dismiss();
+                        mDialog.dismiss();
                     }
                 });
-                dialog.show();
+                mDialog.show();
             }
         });
         setupGridView();
+        setupBottomNavBar();
+        ActivityStack.setEmpty();
     }
 
     //add new appliance method definition
@@ -333,5 +341,45 @@ public class DashboardActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    //method to set up bottom nav bar
+    public void setupBottomNavBar(){
+        BottomNavigationView bottomNavigationView;
+        bottomNavigationView = findViewById(R.id.nav_bar);
+        bottomNavigationView.setSelectedItemId(R.id.home);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.profile:
+                        ActivityStack.push("Home");
+                        startActivity(new Intent(getApplicationContext(),ProfileActivity.class));
+                        overridePendingTransition(0,0);
+                        return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        GlobalClass.BackCounter += 1;
+        if(GlobalClass.BackCounter != 2)
+            Toast.makeText(getApplicationContext(),"Press again to exit",Toast.LENGTH_SHORT).show();
+        if(GlobalClass.BackCounter == 2){
+            DashboardActivity.this.finish();
+            finishAffinity();
+            System.exit(0);
+        }
+        Handler handler = new Handler();
+        //reset counter
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                GlobalClass.BackCounter = 0;
+            }
+        },3000);
     }
 }
