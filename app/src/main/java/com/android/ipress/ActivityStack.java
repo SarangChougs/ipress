@@ -33,5 +33,6 @@ public class ActivityStack {
 
     public static void setEmpty() {
         ActivityStack.top = -1;
+        ActivityStack.stack.clear();
     }
 }

@@ -24,6 +24,7 @@
     <color name="snow_white">#FFFAFA</color>
     <color name="gold">#FFD700</color>
     <color name="dim_gray">#505050</color>
+    <color name="faint_gray">#D3D3D3</color>
     <color name="silver">#666664</color>
     <color name="add_company_btn_color">#5BD738</color>
     <color name="no_results_msg_color">#6B788B</color>

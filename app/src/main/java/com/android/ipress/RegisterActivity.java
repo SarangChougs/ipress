@@ -109,7 +109,7 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            UserDetails userInfo = new UserDetails(fullName,email, username);
+                            UserDetails userInfo = new UserDetails(fullName,email, username,"https://yt3.ggpht.com/a/AATXAJzvYsfy_gOdq3zN66TUhcx5XjxT36erB6BoNG5xoQ=s900-c-k-c0xffffffff-no-rj-mo");
                             mDatabaseReference = mFirebaseDatabase.getReference("Registered Users");
                             mDatabaseReference.child(username).setValue(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override

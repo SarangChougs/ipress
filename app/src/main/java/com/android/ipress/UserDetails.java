@@ -3,16 +3,17 @@ package com.android.ipress;
 import com.google.firebase.database.Exclude;
 
 public class UserDetails {
-    String FullName,Email,Username,Key;
+    String FullName,Email,Username,Key,PicUrl;
 
     public UserDetails(){
         //empty constructor needed
     }
 
-    public UserDetails(String fullName, String email, String username) {
+    public UserDetails(String fullName, String email, String username, String PicUrl) {
         FullName = fullName;
         Email = email;
         Username = username;
+        this.PicUrl = PicUrl;
     }
 
     public String getFullName() {
