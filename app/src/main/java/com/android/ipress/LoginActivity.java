@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -53,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         if (mUser != null) {
             if (mUser.isEmailVerified()) {
                 GlobalClass.CurrentUserEmail = mUser.getEmail();
-                startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
+                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                 finish();
             }
         }
@@ -126,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                                         if (mUser.isEmailVerified()) {
                                             GlobalClass.CurrentUserEmail = mUser.getEmail();
                                             EditRememberMePreference();
-                                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                                            startActivity(new Intent(LoginActivity.this, AppliancesActivity.class));
                                             finish();
                                         } else {
                                             Toast.makeText(LoginActivity.this, "Please verify your account", Toast.LENGTH_SHORT).show();

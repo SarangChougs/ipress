@@ -3,8 +3,6 @@ package com.android.ipress;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -39,9 +37,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DashboardActivity extends AppCompatActivity {
+public class AppliancesActivity extends AppCompatActivity {
 
-    private static final String TAG = "Dashboard";
+    private static final String TAG = "Appliances";
     String mLoggedInUsername;
     List<ApplianceInfo> mAppliances;
     FloatingActionButton floatingActionButton;
@@ -49,24 +47,20 @@ public class DashboardActivity extends AppCompatActivity {
     String mApplianceName;
     GridView mGridView;
     ApplianceAdapter mAdapter;
+    RoomInfo mRoomInfo;
+    String mRoomName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
-
-        LinearLayout Logout = findViewById(R.id.LogoutBtn);
-        Logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                finish();
-            }
-        });
+        setContentView(R.layout.activity_appliances);
 
         mDialog = new Dialog(this);
         mAppliances = new ArrayList<>();
+        mRoomInfo = HomeActivity.SelectedRoomInfo;
+        mRoomName = mRoomInfo.getRoomName();
+        TextView RoomLbl = findViewById(R.id.room_lbl);
+        RoomLbl.setText(mRoomName);
 
         //floating action button to add new appliance
         floatingActionButton = findViewById(R.id.fab);
@@ -113,28 +107,47 @@ public class DashboardActivity extends AppCompatActivity {
         });
         setupGridView();
         setupBottomNavBar();
-        ActivityStack.setEmpty();
     }
 
     //add new appliance method definition
     public void AddAppliances() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances/" + mApplianceName);
+        final String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances/" + mApplianceName;
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.child("state").getValue() == null) {
-                    DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances");
-                    ApplianceInfo applianceInfo = new ApplianceInfo(0, mApplianceName, 0);
-                    reference1.child(mApplianceName).setValue(applianceInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
+                    String parent = mRoomName;
+                    ApplianceInfo applianceInfo = new ApplianceInfo(0,0, mApplianceName, parent);
+                    reference1.setValue(applianceInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (!task.isSuccessful()) {
-                                Toast.makeText(DashboardActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AppliancesActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }else{
+                                String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/deviceCount";
+                                final DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference(Path);
+                                reference2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if(snapshot.getValue() != null) {
+                                            int Count = Integer.parseInt(snapshot.getValue().toString());
+                                            Count++;
+                                            reference2.setValue(Count);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
                             }
                         }
                     });
                 } else {
-                    Toast.makeText(DashboardActivity.this, "Appliance name already exists", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AppliancesActivity.this, "Appliance name already exists", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -161,7 +174,8 @@ public class DashboardActivity extends AppCompatActivity {
                     String email = dataSnapshot.child("email").getValue().toString();
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances");
+                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances";
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
                         reference1.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -174,7 +188,7 @@ public class DashboardActivity extends AppCompatActivity {
                                     applianceInfo.setFavourite(Integer.parseInt(postSnapshot.child("favourite").getValue().toString()));
                                     mAppliances.add(applianceInfo);
                                 }
-                                mAdapter = new ApplianceAdapter(DashboardActivity.this, mAppliances);
+                                mAdapter = new ApplianceAdapter(AppliancesActivity.this, mAppliances);
                                 mGridView.setAdapter(mAdapter);
                             }
 
@@ -284,6 +298,7 @@ public class DashboardActivity extends AppCompatActivity {
     //method to change appliance state to ON/OFF on change button click
     public void changeApplianceStatus(int position) {
         final ApplianceInfo applianceInfo = mAppliances.get(position);
+        applianceInfo.setParent(mRoomName);
         final String Name = applianceInfo.getName();
         int State = applianceInfo.getState();
         if (State == 0)
@@ -300,13 +315,14 @@ public class DashboardActivity extends AppCompatActivity {
                     Log.d(TAG, " change button : username search loop");
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        Log.d(TAG, "changed by :" + email);
-                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances");
+                        Log.d(TAG, "appliance status changed by :" + email);
+                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances";
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
                         reference1.child(Name).setValue(applianceInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (!task.isSuccessful()) {
-                                    Toast.makeText(DashboardActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AppliancesActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -325,6 +341,7 @@ public class DashboardActivity extends AppCompatActivity {
     //method to remove appliance on remove button click
     public void removeAppliance(int position) {
         final ApplianceInfo applianceInfo = mAppliances.get(position);
+        applianceInfo.setParent(mRoomName);
         final String Name = applianceInfo.getName();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -336,12 +353,13 @@ public class DashboardActivity extends AppCompatActivity {
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
                         Log.d(TAG, "removed by :" + email);
-                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances");
+                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances";
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
                         reference1.child(Name).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (!task.isSuccessful()) {
-                                    Toast.makeText(DashboardActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AppliancesActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -359,9 +377,10 @@ public class DashboardActivity extends AppCompatActivity {
 
     public void changeFavouriteStatus(int position) {
         final ApplianceInfo info = mAppliances.get(position);
+        info.setParent(mRoomName);
         final String Name = info.getName();
         int Favourite = info.getFavourite();
-        if(Favourite == 1)
+        if (Favourite == 1)
             Favourite = 0;
         else
             Favourite = 1;
@@ -376,12 +395,13 @@ public class DashboardActivity extends AppCompatActivity {
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
                         Log.d(TAG, "favourite changed by :" + email);
-                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances");
+                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances";
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
                         reference1.child(Name).setValue(info).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (!task.isSuccessful()) {
-                                    Toast.makeText(DashboardActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AppliancesActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -413,8 +433,8 @@ public class DashboardActivity extends AppCompatActivity {
                         return true;
                     case R.id.favourite:
                         ActivityStack.push("Home");
-                        startActivity(new Intent(getApplicationContext(),FavouritesActivity.class));
-                        overridePendingTransition(0,0);
+                        startActivity(new Intent(getApplicationContext(), FavouritesActivity.class));
+                        overridePendingTransition(0, 0);
                         return true;
                 }
                 return false;
@@ -424,21 +444,8 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        GlobalClass.BackCounter += 1;
-        if (GlobalClass.BackCounter != 2)
-            Toast.makeText(getApplicationContext(), "Press again to exit", Toast.LENGTH_SHORT).show();
-        if (GlobalClass.BackCounter == 2) {
-            DashboardActivity.this.finish();
-            finishAffinity();
-            System.exit(0);
-        }
-        Handler handler = new Handler();
-        //reset counter
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                GlobalClass.BackCounter = 0;
-            }
-        }, 3000);
+        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+        overridePendingTransition(0, 0);
+        finish();
     }
 }

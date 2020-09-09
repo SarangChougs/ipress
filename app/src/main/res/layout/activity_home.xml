@@ -5,16 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/rich_black"
-    tools:context=".DashboardActivity">
+    tools:context=".HomeActivity">
 
     <TextView
-        android:id="@+id/dashboard_lbl"
+        android:id="@+id/home_lbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/baloo"
-        android:text="My Appliances"
+        android:text="My Home"
         android:textColor="@color/app_primary_color"
         android:textSize="25sp" />
 
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_below="@id/dashboard_lbl"
+        android:layout_below="@id/home_lbl"
         android:layout_above="@id/nav_bar"
         android:horizontalSpacing="25dp"
         android:numColumns="2"
@@ -50,29 +50,5 @@
         app:itemIconTint="@color/rich_black"
         app:itemTextColor="@color/rich_black"
         app:menu="@menu/bottom_navigation_menu" />
-
-    <LinearLayout
-        android:id="@+id/LogoutBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/logout_vector"
-            app:tint="@color/app_primary_color" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:fontFamily="@font/baloo"
-            android:text="Sign out"
-            android:textColor="@color/app_primary_color"
-            android:textSize="20sp" />
-    </LinearLayout>
 
 </RelativeLayout>

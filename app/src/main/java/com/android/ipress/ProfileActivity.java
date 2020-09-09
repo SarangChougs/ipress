@@ -14,12 +14,9 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.internal.Storage;
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -199,7 +196,7 @@ public class ProfileActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.home:
                         ActivityStack.push("Profile");
-                        startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
+                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.favourite:
@@ -217,7 +214,7 @@ public class ProfileActivity extends AppCompatActivity {
     public void onBackPressed() {
         switch (ActivityStack.pop()) {
             case "Home":
-                startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
+                startActivity(new Intent(getApplicationContext(), AppliancesActivity.class));
                 overridePendingTransition(0, 0);
                 break;
             case "Favourites":

@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -319,7 +317,7 @@ public class FavouritesActivity extends AppCompatActivity {
                         return true;
                     case R.id.home:
                         ActivityStack.push("Favourites");
-                        startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
+                        startActivity(new Intent(getApplicationContext(), AppliancesActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                 }
@@ -332,7 +330,7 @@ public class FavouritesActivity extends AppCompatActivity {
     public void onBackPressed() {
         switch (ActivityStack.pop()) {
             case "Home":
-                startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
+                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                 overridePendingTransition(0, 0);
                 break;
             case "Profile":
