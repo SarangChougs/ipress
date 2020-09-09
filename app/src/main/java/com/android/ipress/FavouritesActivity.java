@@ -241,7 +241,7 @@ public class FavouritesActivity extends AppCompatActivity {
                     Log.d(TAG, " remove button : username search loop");
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        Log.d(TAG, "removed by :" + email);
+                        Log.d(TAG, " removed by :" + email);
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances");
                         reference1.child(Name).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
