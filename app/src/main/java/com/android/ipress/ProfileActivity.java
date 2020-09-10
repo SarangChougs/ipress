@@ -51,7 +51,6 @@ public class ProfileActivity extends AppCompatActivity {
         setupBottomNavBar();
         displayUserInfo();
         editPicBtn();
-        setupLogOutBtn();
     }
 
     //opening gallery using intent
@@ -189,19 +188,23 @@ public class ProfileActivity extends AppCompatActivity {
     public void setupBottomNavBar() {
         BottomNavigationView bottomNavigationView;
         bottomNavigationView = findViewById(R.id.nav_bar);
-        bottomNavigationView.setSelectedItemId(R.id.profile);
+        bottomNavigationView.setSelectedItemId(R.id.settings);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.home:
-                        ActivityStack.push("Profile");
+                        ActivityStack.push("Settings");
                         startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.favourite:
-                        ActivityStack.push("Profile");
+                        ActivityStack.push("Settings");
                         startActivity(new Intent(getApplicationContext(), FavouritesActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                    case R.id.settings:
+                        startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                 }
@@ -212,29 +215,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        switch (ActivityStack.pop()) {
-            case "Home":
-                startActivity(new Intent(getApplicationContext(), AppliancesActivity.class));
-                overridePendingTransition(0, 0);
-                break;
-            case "Favourites":
-                startActivity(new Intent(getApplicationContext(), FavouritesActivity.class));
-                overridePendingTransition(0, 0);
-                break;
-        }
+        //goto parent activity
+        startActivity(new Intent(getApplicationContext(),SettingsActivity.class));
+        overridePendingTransition(0,0);
+        finish();
     }
 
-    public void setupLogOutBtn() {
-        LinearLayout Logout = findViewById(R.id.LogoutBtn);
-        Logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                GlobalClass.CurrentUserEmail = "";
-                ActivityStack.stack.clear();
-                finishAffinity();
-            }
-        });
+    public void backClick(View view){
+        onBackPressed();
     }
 }

@@ -265,9 +265,9 @@ public class FavouritesActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.profile:
+                    case R.id.settings:
                         ActivityStack.push("Favourites");
-                        startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                        startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.home:
@@ -288,8 +288,8 @@ public class FavouritesActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                 overridePendingTransition(0, 0);
                 break;
-            case "Profile":
-                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+            case "Settings":
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                 overridePendingTransition(0, 0);
                 break;
         }
