@@ -64,19 +64,24 @@ public class FavouritesActivity extends AppCompatActivity {
                     String email = dataSnapshot.child("email").getValue().toString();
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances");
+                        String Path = "Registered Users/" + mLoggedInUsername + "/Rooms";
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(Path);
                         reference1.addValueEventListener(new ValueEventListener() {
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                Log.d(TAG, "onDataChange: " + snapshot);
+                            public void onDataChange(@NonNull DataSnapshot AllRoomsSnapshot) {
+                                Log.d(TAG, "onDataChange: " + AllRoomsSnapshot);
                                 mAppliances.clear();
-                                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                                    ApplianceInfo applianceInfo = new ApplianceInfo();
-                                    applianceInfo.setName(postSnapshot.child("name").getValue().toString());
-                                    applianceInfo.setState(postSnapshot.child("state").getValue().toString());
-                                    applianceInfo.setFavourite(Integer.parseInt(postSnapshot.child("favourite").getValue().toString()));
-                                    if(applianceInfo.getFavourite() == 1)
-                                        mAppliances.add(applianceInfo);
+                                for (DataSnapshot roomSnapshot : AllRoomsSnapshot.getChildren()) {
+                                    DataSnapshot applianceSnapShot = roomSnapshot.child("Appliances");
+                                    for(DataSnapshot iterator : applianceSnapShot.getChildren()){
+                                        ApplianceInfo applianceInfo = new ApplianceInfo();
+                                        applianceInfo.setName(iterator.child("name").getValue().toString());
+                                        applianceInfo.setState(iterator.child("state").getValue().toString());
+                                        applianceInfo.setParent(iterator.child("parent").getValue().toString());
+                                        applianceInfo.setFavourite(Integer.parseInt(iterator.child("favourite").getValue().toString()));
+                                        if(applianceInfo.getFavourite() == 1)
+                                            mAppliances.add(applianceInfo);
+                                    }
                                 }
                                 mAdapter = new ApplianceAdapter(FavouritesActivity.this, mAppliances);
                                 mGridView.setAdapter(mAdapter);
@@ -130,13 +135,13 @@ public class FavouritesActivity extends AppCompatActivity {
             LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             ApplianceInfo info = list.get(position);
             if (convertView == null) {
-                grid = layoutInflater.inflate(R.layout.grid_item, null);
-                ImageView DeleteBtn, ApplianceIcon, FavouriteBtn;
+                grid = layoutInflater.inflate(R.layout.favourite_grid_item, null);
+                ImageView ApplianceIcon, FavouriteBtn;
                 Button ChangeBtn;
-                TextView ApplianceName;
+                TextView ApplianceName,ParentName;
                 ApplianceIcon = grid.findViewById(R.id.ApplianceIcon);
-                DeleteBtn = grid.findViewById(R.id.DeleteBtn);
                 ApplianceName = grid.findViewById(R.id.ApplianceName);
+                ParentName = grid.findViewById(R.id.ParentName);
                 ChangeBtn = grid.findViewById(R.id.ChangeBtn);
                 FavouriteBtn = grid.findViewById(R.id.FavouriteBtn);
 
@@ -157,18 +162,12 @@ public class FavouritesActivity extends AppCompatActivity {
                     ChangeBtn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.app_primary_color));
                 }
                 ApplianceName.setText(info.getName());
+                ParentName.setText(info.getParent());
 
                 ChangeBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         changeApplianceStatus(position);
-                    }
-                });
-
-                DeleteBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        removeAppliance(position);
                     }
                 });
 
@@ -188,13 +187,14 @@ public class FavouritesActivity extends AppCompatActivity {
     //method to change appliance state to ON/OFF on change button click
     public void changeApplianceStatus(int position) {
         final ApplianceInfo applianceInfo = mAppliances.get(position);
+        final String Parent = applianceInfo.getParent();
         final String Name = applianceInfo.getName();
         int State = applianceInfo.getState();
         if (State == 0)
             State = 1;
         else
             State = 0;
-        applianceInfo.setState(String.valueOf(State));
+        final int FinalState = State;
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -204,16 +204,10 @@ public class FavouritesActivity extends AppCompatActivity {
                     Log.d(TAG, " change button : username search loop");
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
+                        String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + Parent + "/Appliances/" + Name + "/state";
                         Log.d(TAG, "changed by :" + email);
-                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances");
-                        reference1.child(Name).setValue(applianceInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (!task.isSuccessful()) {
-                                    Toast.makeText(getApplicationContext(), "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(Path);
+                        reference1.setValue(FinalState);
                         break;
                     }
                 }
@@ -226,50 +220,17 @@ public class FavouritesActivity extends AppCompatActivity {
         });
     }
 
-    //method to remove appliance on remove button click
-    public void removeAppliance(int position) {
-        final ApplianceInfo applianceInfo = mAppliances.get(position);
-        final String Name = applianceInfo.getName();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    String email = dataSnapshot.child("email").getValue().toString();
-                    Log.d(TAG, " remove button : username search loop");
-                    if (email.equals(GlobalClass.CurrentUserEmail)) {
-                        mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        Log.d(TAG, " removed by :" + email);
-                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances");
-                        reference1.child(Name).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (!task.isSuccessful()) {
-                                    Toast.makeText(getApplicationContext(), "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
+    //method to remove appliance from favourites
     public void changeFavouriteStatus(int position) {
         final ApplianceInfo info = mAppliances.get(position);
+        final String Parent = info.getParent();
         final String Name = info.getName();
         int Favourite = info.getFavourite();
         if(Favourite == 1)
             Favourite = 0;
         else
             Favourite = 1;
-        info.setFavourite(Favourite);
+        final int FinalFavourite = Favourite;
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -280,15 +241,9 @@ public class FavouritesActivity extends AppCompatActivity {
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
                         Log.d(TAG, "favourite changed by :" + email);
-                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Appliances");
-                        reference1.child(Name).setValue(info).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (!task.isSuccessful()) {
-                                    Toast.makeText(getApplicationContext(), "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                        String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + Parent + "/Appliances/" + Name + "/favourite";
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(Path);
+                        reference1.setValue(FinalFavourite);
                         break;
                     }
                 }
@@ -317,7 +272,7 @@ public class FavouritesActivity extends AppCompatActivity {
                         return true;
                     case R.id.home:
                         ActivityStack.push("Favourites");
-                        startActivity(new Intent(getApplicationContext(), AppliancesActivity.class));
+                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                 }

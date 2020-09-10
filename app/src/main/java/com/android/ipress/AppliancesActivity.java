@@ -426,6 +426,10 @@ public class AppliancesActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
+                    case R.id.home:
+                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
                     case R.id.profile:
                         ActivityStack.push("Home");
                         startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
