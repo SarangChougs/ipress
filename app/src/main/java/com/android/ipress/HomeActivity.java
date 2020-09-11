@@ -47,10 +47,12 @@ public class HomeActivity extends AppCompatActivity {
     String mRoomName;
     public static RoomInfo SelectedRoomInfo;
     public String TAG = "HomeActivity";
+    TextView TotalDeviceCountTV;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        TotalDeviceCountTV = findViewById(R.id.TotalDeviceCount);
         ActivityStack.setEmpty();
         setupBottomNavBar();
         setupGridView();
@@ -182,15 +184,25 @@ public class HomeActivity extends AppCompatActivity {
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Rooms");
                         reference1.addValueEventListener(new ValueEventListener() {
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                Log.d(TAG, "onDataChange: " + snapshot);
+                            public void onDataChange(@NonNull DataSnapshot AllRoomSnapshots) {
+                                Log.d(TAG, "onDataChange: " + AllRoomSnapshots);
                                 mRooms.clear();
-                                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                                int TotalDeviceCount = 0;
+                                for (DataSnapshot RoomSnapshot : AllRoomSnapshots.getChildren()) {
                                     RoomInfo roomInfo = new RoomInfo();
-                                    roomInfo.setRoomName(postSnapshot.child("roomName").getValue().toString());
-                                    roomInfo.setDeviceCount(Integer.parseInt(postSnapshot.child("deviceCount").getValue().toString()));
+                                    String RoomName = RoomSnapshot.child("roomName").getValue().toString();
+                                    int DeviceCount = Integer.parseInt(RoomSnapshot.child("deviceCount").getValue().toString());
+                                    roomInfo.setRoomName(RoomName);
+                                    roomInfo.setDeviceCount(DeviceCount);
                                     mRooms.add(roomInfo);
+                                    TotalDeviceCount += DeviceCount;
                                 }
+                                String text;
+                                if(TotalDeviceCount == 1)
+                                    text = TotalDeviceCount + " Device";
+                                else
+                                    text = TotalDeviceCount + " Devices";
+                                TotalDeviceCountTV.setText(text);
                                 mAdapter = new RoomAdapter(HomeActivity.this, mRooms);
                                 mGridView.setAdapter(mAdapter);
                             }

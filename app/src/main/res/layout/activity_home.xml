@@ -18,12 +18,60 @@
         android:textColor="@color/app_primary_color"
         android:textSize="25sp" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/home_lbl"
+        android:layout_margin="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/app_primary_color"
+            android:padding="20dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/nav_home_vector"
+                app:tint="@color/rich_black"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="All Devices"
+                    android:gravity="center_horizontal"
+                    android:fontFamily="@font/baloo"
+                    android:textColor="@color/rich_black"
+                    android:textSize="17sp"/>
+
+                <TextView
+                    android:id="@+id/TotalDeviceCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="45 devices"
+                    android:gravity="center_horizontal"
+                    android:fontFamily="@font/baloo"
+                    android:textColor="@color/dim_gray"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
     <GridView
         android:id="@+id/SampleGridView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_below="@id/home_lbl"
+        android:layout_margin="8dp"
+        android:layout_below="@id/card"
         android:layout_above="@id/nav_bar"
         android:horizontalSpacing="25dp"
         android:numColumns="2"

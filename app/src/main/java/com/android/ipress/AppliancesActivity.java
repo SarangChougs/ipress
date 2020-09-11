@@ -360,6 +360,24 @@ public class AppliancesActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (!task.isSuccessful()) {
                                     Toast.makeText(AppliancesActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }else{
+                                    String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/deviceCount";
+                                    final DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference(Path);
+                                    reference2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if(snapshot.getValue() != null) {
+                                                int Count = Integer.parseInt(snapshot.getValue().toString());
+                                                Count--;
+                                                reference2.setValue(Count);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
                                 }
                             }
                         });
