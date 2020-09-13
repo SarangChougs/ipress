@@ -201,11 +201,9 @@ public class FavouritesActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     String email = dataSnapshot.child("email").getValue().toString();
-                    Log.d(TAG, " change button : username search loop");
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
                         String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + Parent + "/Appliances/" + Name + "/state";
-                        Log.d(TAG, "changed by :" + email);
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(Path);
                         reference1.setValue(FinalState);
                         break;
@@ -237,10 +235,8 @@ public class FavouritesActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     String email = dataSnapshot.child("email").getValue().toString();
-                    Log.d(TAG, "favourite change button : username search loop");
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        Log.d(TAG, "favourite changed by :" + email);
                         String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + Parent + "/Appliances/" + Name + "/favourite";
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(Path);
                         reference1.setValue(FinalFavourite);

@@ -312,27 +312,24 @@ public class AppliancesActivity extends AppCompatActivity {
     //method to change appliance state to ON/OFF on change button click
     public void changeApplianceStatus(int position) {
         final ApplianceInfo applianceInfo = mAppliances.get(position);
-        applianceInfo.setParent(mRoomName);
         final String Name = applianceInfo.getName();
         int State = applianceInfo.getState();
         if (State == 0)
             State = 1;
         else
             State = 0;
-        applianceInfo.setState(String.valueOf(State));
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
+        final int finalState = State;
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     String email = dataSnapshot.child("email").getValue().toString();
-                    Log.d(TAG, " change button : username search loop");
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        Log.d(TAG, "appliance status changed by :" + email);
-                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances";
+                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances/"+ Name + "/state";
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
-                        reference1.child(Name).setValue(applianceInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        reference1.setValue(finalState).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (!task.isSuccessful()) {
@@ -363,10 +360,8 @@ public class AppliancesActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     String email = dataSnapshot.child("email").getValue().toString();
-                    Log.d(TAG, " remove button : username search loop");
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        Log.d(TAG, "removed by :" + email);
                         String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances";
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
                         reference1.child(Name).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -409,27 +404,24 @@ public class AppliancesActivity extends AppCompatActivity {
 
     public void changeFavouriteStatus(int position) {
         final ApplianceInfo info = mAppliances.get(position);
-        info.setParent(mRoomName);
         final String Name = info.getName();
         int Favourite = info.getFavourite();
         if (Favourite == 1)
             Favourite = 0;
         else
             Favourite = 1;
-        info.setFavourite(Favourite);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
+        final int finalFavourite = Favourite;
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     String email = dataSnapshot.child("email").getValue().toString();
-                    Log.d(TAG, "favourite change button : username search loop");
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        Log.d(TAG, "favourite changed by :" + email);
-                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances";
+                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances/"+ Name + "/favourite";
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
-                        reference1.child(Name).setValue(info).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        reference1.setValue(finalFavourite).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (!task.isSuccessful()) {
