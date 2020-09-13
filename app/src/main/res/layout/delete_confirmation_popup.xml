@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/deletion_confirmation_container"
+        android:padding="15dp">
+
+<!--        <RelativeLayout-->
+<!--            android:id="@+id/ImageViewLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content">-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/SelectedImage"-->
+<!--                android:layout_width="120dp"-->
+<!--                android:layout_height="120dp"-->
+<!--                android:layout_centerInParent="true"-->
+<!--                android:src="@drawable/image_icon" />-->
+<!--        </RelativeLayout>-->
+
+        <RelativeLayout
+            android:id="@+id/MessageLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/ConfirmationMsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:gravity="center"
+                android:fontFamily="@font/baloo"
+                android:text="Are you sure want to delete this appliance? This action cannot be undone"
+                android:textColor="@color/dim_gray"
+                android:textSize="19dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/MessageLayout"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp">
+
+            <Button
+                android:id="@+id/cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/cancel_btn_drawable"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="Cancel"
+                android:textColor="@color/rich_black"
+                android:textSize="17sp" />
+
+            <Button
+                android:id="@+id/delete_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/delete_black_btn_drawable"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:fontFamily="@font/baloo"
+                android:text="Delete"
+                android:textColor="@color/white"
+                android:textSize="17sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

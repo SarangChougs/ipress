@@ -278,7 +278,21 @@ public class AppliancesActivity extends AppCompatActivity {
                 DeleteBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        removeAppliance(position);
+                        mDialog.setContentView(R.layout.delete_confirmation_popup);
+                        Button Cancel = mDialog.findViewById(R.id.cancel_button),Delete = mDialog.findViewById(R.id.delete_button);
+                        Cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mDialog.dismiss();
+                            }
+                        });
+                        Delete.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                removeAppliance(position);
+                            }
+                        });
+                        mDialog.show();
                     }
                 });
 
