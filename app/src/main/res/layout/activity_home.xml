@@ -58,7 +58,7 @@
                     android:id="@+id/TotalDeviceCount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="45 devices"
+                    android:text="devices"
                     android:gravity="center_horizontal"
                     android:fontFamily="@font/baloo"
                     android:textColor="@color/dim_gray"/>

@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     DatabaseReference mDatabaseRef;
     String mUID, mPassword;
     Dialog dialog;
+    TextView mUsernameValidationTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,101 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         }
-        //login method
+        //dynamic validation
+        mUsernameET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!mUsernameET.getText().toString().trim().equals("") && !mPasswordET.getText().toString().trim().equals("")) {
+                    mLoginBtn.setAlpha(1);
+                    mLoginBtn.setClickable(true);
+                } else {
+                    mLoginBtn.setAlpha((float) 0.35);
+                    mLoginBtn.setClickable(false);
+                }
+                if (s.toString().contains(".") ||
+                        s.toString().contains(".") ||
+                        s.toString().contains("#") ||
+                        s.toString().contains("$") ||
+                        s.toString().contains("[") ||
+                        s.toString().contains("]")) {
+                    mLoginBtn.setAlpha((float) 0.35);
+                    mLoginBtn.setClickable(false);
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("must not contain ");
+                    if(s.toString().contains("."))
+                        builder.append("'.' ");
+                    if(s.toString().contains("#"))
+                        builder.append("'#' ");
+                    if(s.toString().contains("$"))
+                        builder.append("'$' ");
+                    if(s.toString().contains("["))
+                        builder.append("'[' ");
+                    if(s.toString().contains("]"))
+                        builder.append("']' ");
+                    mUsernameValidationTV.setText(builder.toString());
+                }else{
+                    mUsernameValidationTV.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        //dynamic validation
+        mPasswordET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String Username = mUsernameET.getText().toString().trim();
+                if (!mUsernameET.getText().toString().trim().equals("") && !mPasswordET.getText().toString().trim().equals("")) {
+                    mLoginBtn.setAlpha(1);
+                    mLoginBtn.setClickable(true);
+                } else {
+                    mLoginBtn.setAlpha((float) 0.35);
+                    mLoginBtn.setClickable(false);
+                }
+                if (Username.contains(".") ||
+                        Username.contains("#") ||
+                        Username.contains("$") ||
+                        Username.contains("[") ||
+                        Username.contains("]")) {
+                    mLoginBtn.setAlpha((float) 0.35);
+                    mLoginBtn.setClickable(false);
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("must not contain ");
+                    if(Username.contains("."))
+                        builder.append("'.' ");
+                    if(Username.contains("#"))
+                        builder.append("'#' ");
+                    if(Username.contains("$"))
+                        builder.append("'$' ");
+                    if(Username.contains("["))
+                        builder.append("'[' ");
+                    if(Username.contains("]"))
+                        builder.append("']' ");
+                    mUsernameValidationTV.setText(builder.toString());
+                }else{
+                    mUsernameValidationTV.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,6 +180,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void setupActivityVariables() {
         mUsernameET = findViewById(R.id.UsernameET);
+        mUsernameValidationTV = findViewById(R.id.username_validation);
         mPasswordET = findViewById(R.id.PasswordET);
         mSignUpTV = findViewById(R.id.sign_up_btn);
         mLoginBtn = findViewById(R.id.LoginBtn);

@@ -95,13 +95,22 @@
                     android:textSize="17sp" />
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/username_validation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="50dp"
+                android:fontFamily="@font/baloo"
+                android:textColor="@color/faint_red"
+                android:layout_below="@id/UIDLayout"
+                android:text=""/>
+
             <RelativeLayout
                 android:id="@+id/PasswordLayout"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_below="@id/UIDLayout"
+                android:layout_below="@id/username_validation"
                 android:layout_marginLeft="30dp"
-                android:layout_marginTop="35dp"
                 android:layout_marginRight="30dp"
                 android:background="@drawable/login_input_field_container">
 
