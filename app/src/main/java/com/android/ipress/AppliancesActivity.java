@@ -58,7 +58,8 @@ public class AppliancesActivity extends AppCompatActivity {
         mDialog = new Dialog(this);
         mAppliances = new ArrayList<>();
         mRoomInfo = HomeActivity.SelectedRoomInfo;
-        mRoomName = mRoomInfo.getRoomName();
+        if(mRoomInfo != null)
+            mRoomName = mRoomInfo.getRoomName();
         TextView RoomLbl = findViewById(R.id.room_lbl);
         RoomLbl.setText(mRoomName);
 

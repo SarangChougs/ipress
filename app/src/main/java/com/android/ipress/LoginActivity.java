@@ -125,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                                         if (mUser.isEmailVerified()) {
                                             GlobalClass.CurrentUserEmail = mUser.getEmail();
                                             EditRememberMePreference();
-                                            startActivity(new Intent(LoginActivity.this, AppliancesActivity.class));
+                                            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                                             finish();
                                         } else {
                                             Toast.makeText(LoginActivity.this, "Please verify your account", Toast.LENGTH_SHORT).show();
