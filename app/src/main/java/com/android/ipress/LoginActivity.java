@@ -104,7 +104,6 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
-
         //dynamic validation
         mPasswordET.addTextChangedListener(new TextWatcher() {
             @Override
@@ -152,6 +151,7 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

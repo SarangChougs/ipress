@@ -455,6 +455,11 @@ public class AppliancesActivity extends AppCompatActivity {
                         startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
+                    case R.id.automation:
+                        ActivityStack.push("Home");
+                        startActivity(new Intent(getApplicationContext(), AutomationActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
                     case R.id.settings:
                         ActivityStack.push("Home");
                         startActivity(new Intent(getApplicationContext(), SettingsActivity.class));

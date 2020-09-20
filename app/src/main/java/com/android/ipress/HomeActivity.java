@@ -2,7 +2,6 @@ package com.android.ipress;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -19,7 +18,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -115,6 +113,11 @@ public class HomeActivity extends AppCompatActivity {
                         startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
+                    case R.id.automation:
+                        ActivityStack.push("Home");
+                        startActivity(new Intent(getApplicationContext(), AutomationActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
                     case R.id.favourite:
                         ActivityStack.push("Home");
                         startActivity(new Intent(getApplicationContext(),FavouritesActivity.class));
@@ -125,7 +128,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
-
 
     //initialize grid view
     public void setupGridView() {

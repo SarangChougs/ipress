@@ -57,6 +57,11 @@ public class SettingsActivity extends AppCompatActivity {
                         startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
+                    case R.id.automation:
+                        ActivityStack.push("Settings");
+                        startActivity(new Intent(getApplicationContext(), AutomationActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
                     case R.id.favourite:
                         ActivityStack.push("Settings");
                         startActivity(new Intent(getApplicationContext(), FavouritesActivity.class));

@@ -198,6 +198,11 @@ public class ProfileActivity extends AppCompatActivity {
                         startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
+                    case R.id.automation:
+                        ActivityStack.push("Settings");
+                        startActivity(new Intent(getApplicationContext(), AutomationActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
                     case R.id.favourite:
                         ActivityStack.push("Settings");
                         startActivity(new Intent(getApplicationContext(), FavouritesActivity.class));
@@ -216,12 +221,12 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //goto parent activity
-        startActivity(new Intent(getApplicationContext(),SettingsActivity.class));
-        overridePendingTransition(0,0);
+        startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+        overridePendingTransition(0, 0);
         finish();
     }
 
-    public void backClick(View view){
+    public void backClick(View view) {
         onBackPressed();
     }
 }
