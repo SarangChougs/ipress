@@ -1,15 +1,14 @@
 package com.android.ipress;
 
-import com.google.firebase.database.Exclude;
-
 public class UserDetails {
-    String FullName,Email,Username,Key,PicUrl;
+    String uid,FullName,Email,Username,PicUrl;
 
     public UserDetails(){
         //empty constructor needed
     }
 
-    public UserDetails(String fullName, String email, String username, String PicUrl) {
+    public UserDetails(String uid,String fullName, String email, String username, String PicUrl) {
+        this.uid = uid;
         this.FullName = fullName;
         this.Email = email;
         this.Username = username;
@@ -38,15 +37,5 @@ public class UserDetails {
 
     public void setUsername(String username) {
         Username = username;
-    }
-
-    @Exclude
-    public String getKey() {
-        return Key;
-    }
-
-    @Exclude
-    public void setKey(String key) {
-        Key = key;
     }
 }
