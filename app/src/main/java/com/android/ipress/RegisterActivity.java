@@ -23,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText mFullNameET,mEmailET, mUsernameET, mPasswordET, mConfirmPasswordET;
+    EditText mFullNameET, mEmailET, mUsernameET, mPasswordET, mConfirmPasswordET;
     TextView mLoginTV;
     Button mRegisterBtn;
     FirebaseAuth mAuth;
@@ -51,19 +51,19 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mBtnPressed = true;
                 //validation
-                if (mPasswordET.getText().toString().trim().equals(mConfirmPasswordET.getText().toString().trim())
+                if ((mPasswordET.getText().toString().trim().equals(mConfirmPasswordET.getText().toString().trim())
                         && !mEmailET.getText().toString().trim().equals("")
                         && !mFullNameET.getText().toString().trim().equals("")
-                        && mPasswordET.getText().toString().trim().length() >= 6)
+                        && mPasswordET.getText().toString().trim().length() >= 6) || true)
                     checkUser();
                 else {
-                    if(mPasswordET.getText().toString().trim().length() < 6)
+                    if (mPasswordET.getText().toString().trim().length() < 6)
                         Toast.makeText(RegisterActivity.this, "Password too weak", Toast.LENGTH_SHORT).show();
-                    if(!mPasswordET.getText().toString().trim().equals(mConfirmPasswordET.getText().toString().trim()))
+                    if (!mPasswordET.getText().toString().trim().equals(mConfirmPasswordET.getText().toString().trim()))
                         Toast.makeText(RegisterActivity.this, "Password did not match", Toast.LENGTH_SHORT).show();
-                    if(mEmailET.getText().toString().trim().equals(""))
+                    if (mEmailET.getText().toString().trim().equals(""))
                         Toast.makeText(RegisterActivity.this, "Email Required", Toast.LENGTH_SHORT).show();
-                    if(mFullNameET.getText().toString().trim().equals(""))
+                    if (mFullNameET.getText().toString().trim().equals(""))
                         Toast.makeText(RegisterActivity.this, "Full Name Required", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -77,15 +77,14 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     //to check username availability
-    public void checkUser(){
+    public void checkUser() {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Registered Users").child(mUsernameET.getText().toString().toLowerCase());
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.child("email").getValue() == null){
+                if (snapshot.child("email").getValue() == null) {
                     registerUser(); //if username is available
-                }
-                else //if username isn't available then show toast message.
+                } else //if username isn't available then show toast message.
                     Toast.makeText(RegisterActivity.this, "Username already taken", Toast.LENGTH_SHORT).show();
             }
 
@@ -98,35 +97,62 @@ public class RegisterActivity extends AppCompatActivity {
 
     //register new user in the database
     public void registerUser() {
-        final String fullName,email,username,password;
-        fullName = mFullNameET.getText().toString().trim();
-        email = mEmailET.getText().toString().trim();
-        username = mUsernameET.getText().toString().trim().toLowerCase();
-        password = mPasswordET.getText().toString().trim();
+        final String fullName = "Peregrin Took", email = "pTook@gmail.com", username = "pippin", password = "12345678";
+//        fullName = mFullNameET.getText().toString().trim();
+//        email = mEmailET.getText().toString().trim();
+//        username = mUsernameET.getText().toString().trim().toLowerCase();
+//        password = mPasswordET.getText().toString().trim();
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            UserDetails userInfo = new UserDetails(fullName,email, username,"https://yt3.ggpht.com/a/AATXAJzvYsfy_gOdq3zN66TUhcx5XjxT36erB6BoNG5xoQ=s900-c-k-c0xffffffff-no-rj-mo");
-                            mDatabaseReference = mFirebaseDatabase.getReference("Registered Users");
-                            mDatabaseReference.child(username).setValue(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            System.out.println("account creation successful");
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("counts/userId");
+                            reference.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    mAuth.getCurrentUser().sendEmailVerification()
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if(task.isSuccessful()){
-                                                        mAuth.signOut();
-                                                        mBtnPressed = false;
-                                                        Toast.makeText(RegisterActivity.this, "Registration successful, please verify your account", Toast.LENGTH_SHORT).show();
-                                                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                                                        finish();
-                                                    }
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.getValue() != null) {
+                                        System.out.println("reading userid count successful");
+                                        int id = Integer.parseInt(snapshot.getValue().toString());
+                                        id++;
+                                        final String uid = String.valueOf(id);
+                                        UserDetails userInfo = new UserDetails(uid, fullName, email, username, "https://yt3.ggpht.com/a/AATXAJzvYsfy_gOdq3zN66TUhcx5XjxT36erB6BoNG5xoQ=s900-c-k-c0xffffffff-no-rj-mo");
+                                        mDatabaseReference = mFirebaseDatabase.getReference("Registered Users");
+                                        mDatabaseReference.child(username).setValue(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    System.out.println("adding user info to database successful");
+                                                    if (mAuth.getCurrentUser() != null)
+                                                        mAuth.getCurrentUser().sendEmailVerification()
+                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        if (task.isSuccessful()) {
+                                                                            mAuth.signOut();
+                                                                            mBtnPressed = false;
+                                                                            Toast.makeText(RegisterActivity.this, "Registration successful, please verify your account", Toast.LENGTH_SHORT).show();
+                                                                            FirebaseDatabase.getInstance().getReference("counts/userId").setValue(uid);
+                                                                            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                                                                            finish();
+                                                                        }
+                                                                    }
+                                                                });
+                                                } else {
+                                                    Toast.makeText(RegisterActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
-                                            });
+                                            }
+                                        });
+                                    }else{
+                                        System.out.println("count value null");
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Toast.makeText(RegisterActivity.this, "Error fetching id data", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         } else {
