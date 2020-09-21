@@ -17,6 +17,45 @@
         android:textColor="@color/rich_black"
         android:textSize="23sp" />
 
+    <TextView
+        android:id="@+id/added_items_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/baloo"
+        android:layout_below="@id/selected_event_lbl"
+        android:paddingStart="20dp"
+        android:text="Added Appliances"
+        android:textColor="@color/rich_black"
+        android:textSize="19sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/added_appliance_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_below="@id/added_items_lbl"/>
+
+    <TextView
+        android:id="@+id/to_add_items_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/baloo"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/added_appliance_recycler_view"
+        android:paddingStart="20dp"
+        android:text="To add appliances"
+        android:textColor="@color/rich_black"
+        android:textSize="19sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/to_add_appliance_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_below="@id/to_add_items_lbl"/>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"

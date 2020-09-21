@@ -224,7 +224,7 @@ public class AutomationActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.child("eventName").getValue() == null) {
                     DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Events");
-                    EventInfo eventInfo = new EventInfo(mEventName, String.valueOf(0), "0");
+                    EventInfo eventInfo = new EventInfo(mEventName, String.valueOf(0), "0","");
                     reference1.child(mEventName).setValue(eventInfo);
                 } else {
                     Toast.makeText(AutomationActivity.this, "Event already exists", Toast.LENGTH_SHORT).show();

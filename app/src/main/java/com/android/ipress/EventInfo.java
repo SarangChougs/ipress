@@ -4,15 +4,25 @@ public class EventInfo {
     String EventName;
     String DeviceCount;
     String Activated;
+    String ApplianceIds;
 
     public EventInfo() {
         //empty constructor needed
     }
 
-    public EventInfo(String eventName, String deviceCount, String activated) {
+    public EventInfo(String eventName, String deviceCount, String activated, String applianceIds) {
         EventName = eventName;
         DeviceCount = deviceCount;
         Activated = activated;
+        ApplianceIds = applianceIds;
+    }
+
+    public String getApplianceIds() {
+        return ApplianceIds;
+    }
+
+    public void setApplianceIds(String applianceIds) {
+        ApplianceIds = applianceIds;
     }
 
     public String getEventName() {
