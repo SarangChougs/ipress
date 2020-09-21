@@ -120,13 +120,13 @@ public class AppliancesActivity extends AppCompatActivity {
                 if (snapshot.child("state").getValue() == null) {
                     DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
                     String parent = mRoomName;
-                    ApplianceInfo applianceInfo = new ApplianceInfo(0,0, mApplianceName, parent);
+                    ApplianceInfo applianceInfo = new ApplianceInfo("1",0,0, mApplianceName, parent);
                     reference1.setValue(applianceInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (!task.isSuccessful()) {
                                 Toast.makeText(AppliancesActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }else{
+                            } else{
                                 String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/deviceCount";
                                 final DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference(Path);
                                 reference2.addListenerForSingleValueEvent(new ValueEventListener() {

@@ -141,16 +141,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                     ref.collection("ids").document("userids").set(map);
                                                     String id = String.valueOf(userid);
                                                     String picUrl = "https://yt3.ggpht.com/a/AATXAJzvYsfy_gOdq3zN66TUhcx5XjxT36erB6BoNG5xoQ=s900-c-k-c0xffffffff-no-rj-mo";
-                                                    Map<String,String> user = new HashMap<>();
-                                                    /**
-                                                     * Not taking all fields as parameters
-                                                     * taking just fullName, email, username
-                                                     */
-                                                    map.put("id",id);
-                                                    map.put("fullName",fullName);
-                                                    map.put("email",email);
-                                                    map.put("username",username);
-                                                    map.put("picUrl",picUrl);
+                                                    UserDetails user = new UserDetails(id,fullName,email,username,picUrl);
                                                     ref.collection("users").document(id).set(user);
                                                     Toast.makeText(RegisterActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
                                                 }else{
