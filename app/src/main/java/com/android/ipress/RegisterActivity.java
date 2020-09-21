@@ -83,8 +83,10 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.child("email").getValue() == null) {
-                    registerUser(); //if username is available
-                } else //if username isn't available then show toast message.
+                    //if username is available, register
+                    registerUser();
+                } else
+                    //if username isn't available then show toast message.
                     Toast.makeText(RegisterActivity.this, "Username already taken", Toast.LENGTH_SHORT).show();
             }
 
@@ -95,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    //register new user in the database
+    //method to register new user in the database
     public void registerUser() {
         final String fullName, email, username, password;
         fullName = mFullNameET.getText().toString().trim();
@@ -109,6 +111,7 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             System.out.println("account creation successful");
+                            //getting id for new user
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("counts/userId");
                             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -116,8 +119,10 @@ public class RegisterActivity extends AppCompatActivity {
                                     if (snapshot.getValue() != null) {
                                         System.out.println("reading userid count successful");
                                         int id = Integer.parseInt(snapshot.getValue().toString());
+                                        //incrementing for new user
                                         id++;
                                         final String uid = String.valueOf(id);
+                                        //creating user info object and setting up new user
                                         UserDetails userInfo = new UserDetails(uid, fullName, email, username, "https://yt3.ggpht.com/a/AATXAJzvYsfy_gOdq3zN66TUhcx5XjxT36erB6BoNG5xoQ=s900-c-k-c0xffffffff-no-rj-mo");
                                         mDatabaseReference = mFirebaseDatabase.getReference("Registered Users");
                                         mDatabaseReference.child(username).setValue(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {

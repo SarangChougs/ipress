@@ -86,7 +86,6 @@ public class AppliancesActivity extends AppCompatActivity {
                                     String email = dataSnapshot.child("email").getValue().toString();
                                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                                        Log.d(TAG, "" + email);
                                         //add new appliance method call
                                         AddAppliances();
                                         break;
@@ -197,7 +196,6 @@ public class AppliancesActivity extends AppCompatActivity {
                         reference1.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                Log.d(TAG, "onDataChange: " + snapshot);
                                 mAppliances.clear();
                                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                                     ApplianceInfo applianceInfo = new ApplianceInfo();

@@ -81,6 +81,11 @@ public class SettingsActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
                 finish();
                 break;
+            case "Automation":
+                startActivity(new Intent(getApplicationContext(), AutomationActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                break;
             case "Favourites":
                 startActivity(new Intent(getApplicationContext(), FavouritesActivity.class));
                 overridePendingTransition(0, 0);

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        app:cardCornerRadius="15dp"
+        android:layout_margin="30dp"
+        android:layout_centerInParent="true"
+        app:cardElevation="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="30dp">
+
+            <ImageView
+                android:id="@+id/event_icon"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/event" />
+
+            <TextView
+                android:id="@+id/event_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_below="@id/event_icon"
+                android:fontFamily="sans-serif-black"
+                android:paddingLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:paddingRight="20dp"
+                android:textColor="@color/rich_black"
+                android:text="Event Name"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/device_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_below="@id/event_name"
+                android:textColor="@color/darker_grey"
+                android:paddingLeft="20dp"
+                android:fontFamily="sans-serif-black"
+                android:paddingRight="20dp"
+                android:text="Device Count"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/activate_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/activate_drawable"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/white"
+                android:layout_below="@id/device_count"
+                android:text="Activate"
+                android:fontFamily="sans-serif-black"
+                android:textSize="16sp"
+                android:layout_margin="15dp"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>

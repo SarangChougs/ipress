@@ -6,4 +6,45 @@
     android:layout_height="match_parent"
     tools:context=".AutomationActivity">
 
+    <TextView
+        android:id="@+id/events_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/baloo"
+        android:text="Events"
+        android:textColor="@color/rich_black"
+        android:textSize="25sp" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/ViewPager"
+        android:layout_width="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/events_lbl"
+        android:layout_above="@id/nav_bar"
+        android:layout_height="wrap_content" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/nav_bar"
+        android:layout_margin="32dp"
+        android:src="@drawable/add_button_asset"
+        android:tint="@color/white"
+        app:backgroundTint="@color/rich_black" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/rich_black"
+        app:itemBackground="@color/rich_black"
+        app:itemIconTint="@color/app_primary_color"
+        app:itemTextColor="@color/app_primary_color"
+        app:menu="@menu/bottom_navigation_menu" />
+
 </RelativeLayout>

@@ -293,6 +293,10 @@ public class FavouritesActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                 overridePendingTransition(0, 0);
                 break;
+            case "Automation":
+                startActivity(new Intent(getApplicationContext(), AutomationActivity.class));
+                overridePendingTransition(0, 0);
+                break;
         }
     }
 }

@@ -67,7 +67,6 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         mRoomName = NameET.getText().toString().trim().toLowerCase();
-                        Log.d(TAG, "into add function");
                         //to get the username for currently logged in user's username
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
                         reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -75,10 +74,8 @@ public class HomeActivity extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                     String email = dataSnapshot.child("email").getValue().toString();
-                                    Log.d(TAG, " add button username search loop");
                                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                                        Log.d(TAG, "" + email);
                                         //add new appliance method call
                                         AddRoom();
                                         break;
@@ -187,7 +184,6 @@ public class HomeActivity extends AppCompatActivity {
                         reference1.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot AllRoomSnapshots) {
-                                Log.d(TAG, "onDataChange: " + AllRoomSnapshots);
                                 mRooms.clear();
                                 int TotalDeviceCount = 0;
                                 for (DataSnapshot RoomSnapshot : AllRoomSnapshots.getChildren()) {
