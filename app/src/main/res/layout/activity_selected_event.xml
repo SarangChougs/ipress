@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".SelectedEventActivity">
 
+    <TextView
+        android:id="@+id/selected_event_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/baloo"
+        android:text="Event Name"
+        android:textColor="@color/rich_black"
+        android:textSize="23sp" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"

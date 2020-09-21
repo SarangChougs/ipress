@@ -6,18 +6,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class SelectedEventActivity extends AppCompatActivity {
 
+    private EventInfo SelectedEventInfo;
+    TextView SelectedEventNameTV;
+    String mLoggedInUsername;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selected_event);
+        SelectedEventInfo = AutomationActivity.SelectedEventInfo;
+        SelectedEventNameTV = findViewById(R.id.selected_event_lbl);
+        SelectedEventNameTV.setText(SelectedEventInfo.getEventName());
         setupBottomNavBar();
-        Toast.makeText(this, "" + AutomationActivity.SelectedEventInfo.getEventName(), Toast.LENGTH_SHORT).show();
     }
 
     //method to set up bottom nav bar
