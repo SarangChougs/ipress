@@ -54,7 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if ((mPasswordET.getText().toString().trim().equals(mConfirmPasswordET.getText().toString().trim())
                         && !mEmailET.getText().toString().trim().equals("")
                         && !mFullNameET.getText().toString().trim().equals("")
-                        && mPasswordET.getText().toString().trim().length() >= 6) || true)
+                        && mPasswordET.getText().toString().trim().length() >= 6))
                     checkUser();
                 else {
                     if (mPasswordET.getText().toString().trim().length() < 6)
@@ -97,11 +97,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     //register new user in the database
     public void registerUser() {
-        final String fullName = "Peregrin Took", email = "pTook@gmail.com", username = "pippin", password = "12345678";
-//        fullName = mFullNameET.getText().toString().trim();
-//        email = mEmailET.getText().toString().trim();
-//        username = mUsernameET.getText().toString().trim().toLowerCase();
-//        password = mPasswordET.getText().toString().trim();
+        final String fullName, email, username, password;
+        fullName = mFullNameET.getText().toString().trim();
+        email = mEmailET.getText().toString().trim();
+        username = mUsernameET.getText().toString().trim().toLowerCase();
+        password = mPasswordET.getText().toString().trim();
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {

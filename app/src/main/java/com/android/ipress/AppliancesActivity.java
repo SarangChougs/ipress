@@ -58,7 +58,7 @@ public class AppliancesActivity extends AppCompatActivity {
         mDialog = new Dialog(this);
         mAppliances = new ArrayList<>();
         mRoomInfo = HomeActivity.SelectedRoomInfo;
-        if(mRoomInfo != null)
+        if (mRoomInfo != null)
             mRoomName = mRoomInfo.getRoomName();
         TextView RoomLbl = findViewById(R.id.room_lbl);
         RoomLbl.setText(mRoomName);
@@ -76,7 +76,7 @@ public class AppliancesActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         mApplianceName = NameET.getText().toString().trim().toLowerCase();
-                        Log.d(TAG, "into add function");
+                        System.out.println("into add function");
                         //to get the username for currently logged in user's username
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
                         reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -84,7 +84,6 @@ public class AppliancesActivity extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                     String email = dataSnapshot.child("email").getValue().toString();
-                                    Log.d(TAG, " add button username search loop");
                                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
                                         Log.d(TAG, "" + email);
@@ -112,39 +111,57 @@ public class AppliancesActivity extends AppCompatActivity {
 
     //add new appliance method definition
     public void AddAppliances() {
-        final String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances/" + mApplianceName;
+        final String path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/Appliances/" + mApplianceName;
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.child("state").getValue() == null) {
-                    DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
-                    String parent = mRoomName;
-                    ApplianceInfo applianceInfo = new ApplianceInfo(0,0, mApplianceName, parent);
-                    reference1.setValue(applianceInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    FirebaseDatabase.getInstance().getReference("counts/applianceId").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (!task.isSuccessful()) {
-                                Toast.makeText(AppliancesActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }else{
-                                String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/deviceCount";
-                                final DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference(Path);
-                                reference2.addListenerForSingleValueEvent(new ValueEventListener() {
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.getValue() != null) {
+                                String idStr = snapshot.getValue().toString();
+                                int id = Integer.parseInt(idStr);
+                                id++;
+                                idStr = id + "";
+                                String parent = mRoomName;
+                                ApplianceInfo applianceInfo = new ApplianceInfo(idStr, 0, 0, mApplianceName, parent);
+                                //increment appliance id count
+                                FirebaseDatabase.getInstance().getReference("counts/applianceId").setValue(idStr);
+                                //add appliance to database
+                                FirebaseDatabase.getInstance().getReference(path).setValue(applianceInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        if(snapshot.getValue() != null) {
-                                            int Count = Integer.parseInt(snapshot.getValue().toString());
-                                            Count++;
-                                            reference2.setValue(Count);
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (!task.isSuccessful()) {
+                                            Toast.makeText(AppliancesActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/deviceCount";
+                                            final DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference(Path);
+                                            reference2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if (snapshot.getValue() != null) {
+                                                        int Count = Integer.parseInt(snapshot.getValue().toString());
+                                                        Count++;
+                                                        reference2.setValue(Count);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
                                         }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-
                                     }
                                 });
                             }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
                         }
                     });
                 } else {
@@ -175,7 +192,7 @@ public class AppliancesActivity extends AppCompatActivity {
                     String email = dataSnapshot.child("email").getValue().toString();
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances";
+                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/Appliances";
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
                         reference1.addValueEventListener(new ValueEventListener() {
                             @Override
@@ -280,7 +297,7 @@ public class AppliancesActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         mDialog.setContentView(R.layout.delete_confirmation_popup);
-                        Button Cancel = mDialog.findViewById(R.id.cancel_button),Delete = mDialog.findViewById(R.id.delete_button);
+                        Button Cancel = mDialog.findViewById(R.id.cancel_button), Delete = mDialog.findViewById(R.id.delete_button);
                         Cancel.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -291,6 +308,7 @@ public class AppliancesActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 removeAppliance(position);
+                                mDialog.dismiss();
                             }
                         });
                         mDialog.show();
@@ -328,7 +346,7 @@ public class AppliancesActivity extends AppCompatActivity {
                     String email = dataSnapshot.child("email").getValue().toString();
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances/"+ Name + "/state";
+                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/Appliances/" + Name + "/state";
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
                         reference1.setValue(finalState).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -363,20 +381,20 @@ public class AppliancesActivity extends AppCompatActivity {
                     String email = dataSnapshot.child("email").getValue().toString();
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances";
+                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/Appliances";
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
                         reference1.child(Name).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (!task.isSuccessful()) {
                                     Toast.makeText(AppliancesActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                }else{
-                                    String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/deviceCount";
+                                } else {
+                                    String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/deviceCount";
                                     final DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference(Path);
                                     reference2.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            if(snapshot.getValue() != null) {
+                                            if (snapshot.getValue() != null) {
                                                 int Count = Integer.parseInt(snapshot.getValue().toString());
                                                 Count--;
                                                 reference2.setValue(Count);
@@ -420,7 +438,7 @@ public class AppliancesActivity extends AppCompatActivity {
                     String email = dataSnapshot.child("email").getValue().toString();
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/"+ mRoomName + "/Appliances/"+ Name + "/favourite";
+                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/Appliances/" + Name + "/favourite";
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
                         reference1.setValue(finalFavourite).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override

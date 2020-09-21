@@ -1,6 +1,7 @@
 package com.android.ipress;
 
 public class ApplianceInfo {
+    String applianceId;
     int State, Favourite;
     String Name,Parent;
 
@@ -8,11 +9,21 @@ public class ApplianceInfo {
         //empty constructor needed
     }
 
-    public ApplianceInfo(int state, int favourite, String name, String parent) {
+
+    public ApplianceInfo(String applianceId, int state, int favourite, String name, String parent) {
+        this.applianceId = applianceId;
         State = state;
         Favourite = favourite;
         Name = name;
         Parent = parent;
+    }
+
+    public String getApplianceId() {
+        return applianceId;
+    }
+
+    public void setApplianceId(String applianceId) {
+        this.applianceId = applianceId;
     }
 
     public String getParent() {
