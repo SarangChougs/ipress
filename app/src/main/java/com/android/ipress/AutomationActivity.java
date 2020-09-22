@@ -32,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AutomationActivity extends AppCompatActivity {
@@ -79,6 +80,7 @@ public class AutomationActivity extends AppCompatActivity {
                                     eventInfo.setDeviceCount(eventSnapshot.child("deviceCount").getValue().toString());
                                     eventInfo.setEventName(eventSnapshot.child("eventName").getValue().toString());
                                     eventInfo.setActivated(eventSnapshot.child("activated").getValue().toString());
+                                    eventInfo.setApplianceIds(eventSnapshot.child("applianceIds").getValue().toString());
                                     mEvents.add(eventInfo);
                                 }
                                 sliderAdapter = new SliderAdapter(getApplicationContext(), mEvents);
@@ -145,12 +147,12 @@ public class AutomationActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     SelectedEventInfo = mEvents.get(position);
-                    startActivity(new Intent(getApplicationContext(),SelectedEventActivity.class));
-                    overridePendingTransition(0,0);
+                    startActivity(new Intent(getApplicationContext(), SelectedEventActivity.class));
+                    overridePendingTransition(0, 0);
                 }
             });
 
-            if(eventInfo.getActivated().equals("1")){
+            if (eventInfo.getActivated().equals("1")) {
                 Activate.setText("Deactivate");
                 Activate.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.deactivate_drawable));
                 Activate.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.rich_black));
@@ -160,6 +162,12 @@ public class AutomationActivity extends AppCompatActivity {
                 Activate.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.app_primary_color));
             }
 
+            Activate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    changeEventStatus(position);
+                }
+            });
 
             container.addView(view);
 
@@ -170,6 +178,60 @@ public class AutomationActivity extends AppCompatActivity {
         public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             container.removeView((RelativeLayout) object);
         }
+    }
+
+    private void changeEventStatus(int position) {
+        EventInfo eventInfo = mEvents.get(position);
+        final String eventName = eventInfo.getEventName();
+        String Ids = eventInfo.getApplianceIds();
+        final List<String> applianceIds = new ArrayList<>(Arrays.asList(Ids.split(" ")));
+        String initialState = eventInfo.getActivated();
+        if (initialState.equals("1"))
+            initialState = "0";
+        else
+            initialState = "1";
+        final String finalState = initialState;
+        FirebaseDatabase.getInstance().getReference("Registered Users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                    if (userSnapshot.child("email").getValue().toString().equals(GlobalClass.CurrentUserEmail)) {
+                        mLoggedInUsername = userSnapshot.child("username").getValue().toString();
+                        FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Rooms").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot AllRoomsSnapshot) {
+                                for (DataSnapshot roomSnapshot : AllRoomsSnapshot.getChildren()) {
+                                    String roomName = roomSnapshot.child("roomName").getValue().toString();
+                                    DataSnapshot applianceSnapShot = roomSnapshot.child("Appliances");
+                                    for(DataSnapshot iterator : applianceSnapShot.getChildren()){
+                                        String applianceName = iterator.child("name").getValue().toString();
+                                        String id = iterator.child("applianceId").getValue().toString();
+                                        if(applianceIds.contains(id)){
+                                            FirebaseDatabase.getInstance()
+                                                    .getReference("Registered Users/" + mLoggedInUsername + "/Rooms/" + roomName + "/Appliances/" + applianceName + "/state")
+                                                    .setValue(finalState);
+                                        }
+                                    }
+                                    FirebaseDatabase.getInstance()
+                                            .getReference("Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/activated")
+                                            .setValue(finalState);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     //method to set up variables for add event fab, references, etc
@@ -224,7 +286,7 @@ public class AutomationActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.child("eventName").getValue() == null) {
                     DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Events");
-                    EventInfo eventInfo = new EventInfo(mEventName, String.valueOf(0), "0","");
+                    EventInfo eventInfo = new EventInfo(mEventName, String.valueOf(0), "0", "");
                     reference1.child(mEventName).setValue(eventInfo);
                 } else {
                     Toast.makeText(AutomationActivity.this, "Event already exists", Toast.LENGTH_SHORT).show();
