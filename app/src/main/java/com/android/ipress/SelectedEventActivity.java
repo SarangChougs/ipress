@@ -306,9 +306,13 @@ public class SelectedEventActivity extends AppCompatActivity {
                                     }
                                     FirebaseDatabase.getInstance().getReference(Path).setValue(Ids);
                                     String[] count = Ids.split(" ");
+                                    int deviceCount = count.length;
+                                    if(count[0].equals("")){
+                                        deviceCount -= 1;
+                                    }
                                     FirebaseDatabase.getInstance()
                                             .getReference("Registered Users/" + mLoggedInUsername + "/Events/" + mSelectedEventName + "/deviceCount")
-                                            .setValue(count.length);
+                                            .setValue(deviceCount);
 
                                 } else {
                                     System.out.println("null applianceIds, Activity : SelectedEventActivity Method : removeApplianceFromEvent");

@@ -141,7 +141,11 @@ public class AutomationActivity extends AppCompatActivity {
 
             EventIcon.setImageResource(R.drawable.event);
             EventName.setText(eventInfo.getEventName());
-            DeviceCount.setText(eventInfo.getDeviceCount());
+            if(eventInfo.getDeviceCount().equals("1")){
+                DeviceCount.setText(eventInfo.getDeviceCount() + " Device");
+            }else{
+                DeviceCount.setText(eventInfo.getDeviceCount() + " Devices");
+            }
 
             EventIcon.setOnClickListener(new View.OnClickListener() {
                 @Override

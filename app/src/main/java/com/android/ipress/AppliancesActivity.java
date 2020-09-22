@@ -35,6 +35,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AppliancesActivity extends AppCompatActivity {
@@ -199,6 +200,7 @@ public class AppliancesActivity extends AppCompatActivity {
                                 mAppliances.clear();
                                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                                     ApplianceInfo applianceInfo = new ApplianceInfo();
+                                    applianceInfo.setApplianceId(postSnapshot.child("applianceId").getValue().toString());
                                     applianceInfo.setName(postSnapshot.child("name").getValue().toString());
                                     applianceInfo.setState(postSnapshot.child("state").getValue().toString());
                                     applianceInfo.setFavourite(Integer.parseInt(postSnapshot.child("favourite").getValue().toString()));
@@ -369,7 +371,7 @@ public class AppliancesActivity extends AppCompatActivity {
     //method to remove appliance on remove button click
     public void removeAppliance(int position) {
         final ApplianceInfo applianceInfo = mAppliances.get(position);
-        applianceInfo.setParent(mRoomName);
+        final String applianceId = applianceInfo.getApplianceId();
         final String Name = applianceInfo.getName();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -379,7 +381,44 @@ public class AppliancesActivity extends AppCompatActivity {
                     String email = dataSnapshot.child("email").getValue().toString();
                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                        String path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/Appliances";
+                        String path = "Registered Users/" + mLoggedInUsername + "/Events";
+                        FirebaseDatabase.getInstance().getReference(path).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for(DataSnapshot EventSnapshot : snapshot.getChildren()){
+                                    String Path;
+                                    String Ids = EventSnapshot.child("applianceIds").getValue().toString();
+                                    String eventName = EventSnapshot.child("eventName").getValue().toString();
+                                    List<String> EventAppIds = new ArrayList<>(Arrays.asList(Ids.split(" ")));
+                                    EventAppIds.remove(applianceId);
+                                    int i = 0;
+                                    Ids = "";
+                                    while (i < EventAppIds.size()) {
+                                        if (Ids.length() == 0)
+                                            Ids = EventAppIds.get(i) + " ";
+                                        else
+                                            Ids = Ids + EventAppIds.get(i) + " ";
+                                        i++;
+                                    }
+                                    Path = "Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/applianceIds";
+                                    FirebaseDatabase.getInstance().getReference(Path).setValue(Ids);
+                                    String[] count = Ids.split(" ");
+                                    int deviceCount = count.length;
+                                    if(count[0].equals("")){
+                                        deviceCount -= 1;
+                                    }
+                                    FirebaseDatabase.getInstance()
+                                            .getReference("Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/deviceCount")
+                                            .setValue(deviceCount);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                        path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/Appliances";
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
                         reference1.child(Name).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override

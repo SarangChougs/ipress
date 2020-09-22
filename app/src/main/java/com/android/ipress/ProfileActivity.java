@@ -38,7 +38,7 @@ public class ProfileActivity extends AppCompatActivity {
     String mUsername, mEmail;
     String TAG = "ProfileActivity";
     TextView NameTV, EmailTV, UsernameTV;
-    Button mEditPic;
+    Button mEditPic,mChooseAgain;
     public static final int PICK_FILE_REQUEST = 1;
     Uri mImageUri;
     ImageView ProfilePic;
@@ -72,6 +72,7 @@ public class ProfileActivity extends AppCompatActivity {
                     .placeholder(R.drawable.exclamation_mark_image)
                     .into(ProfilePic);
             mEditPic.setText("Update");
+            mChooseAgain.setVisibility(View.VISIBLE);
         } else {
             Toast.makeText(this, "Failed to select image", Toast.LENGTH_SHORT).show();
         }
@@ -126,18 +127,27 @@ public class ProfileActivity extends AppCompatActivity {
     //method to set click listener for picture button
     public void editPicBtn() {
         mEditPic = findViewById(R.id.EditPicBtn);
+        mChooseAgain = findViewById(R.id.ChooseAgainBtn);
         mEditPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mEditPic.getText().toString().equals("Choose picture")) {
                     openFileChooser();
                 } else if (mEditPic.getText().toString().equals("Update")) {
+                    mEditPic.setText("Updating...");
                     updateProfilePic();
                 }
             }
         });
+        mChooseAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFileChooser();
+            }
+        });
     }
 
+    //method to update selected picture
     public void updateProfilePic() {
         mUsername = UsernameTV.getText().toString();
         String FileName = mUsername + "_profile_pic." + getFileExtension(mImageUri);
@@ -157,8 +167,8 @@ public class ProfileActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if (task.isSuccessful()) {
-                                                            Toast.makeText(ProfileActivity.this, "Profile Pic updated successfully", Toast.LENGTH_SHORT).show();
                                                             mEditPic.setText("Choose picture");
+                                                            mChooseAgain.setVisibility(View.GONE);
                                                         } else {
                                                             Toast.makeText(ProfileActivity.this, "Failed to update profile picture", Toast.LENGTH_SHORT).show();
                                                             mEditPic.setText("Update");
