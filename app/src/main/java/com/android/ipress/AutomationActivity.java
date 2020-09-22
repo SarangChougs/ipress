@@ -212,10 +212,10 @@ public class AutomationActivity extends AppCompatActivity {
                                                     .setValue(finalState);
                                         }
                                     }
-                                    FirebaseDatabase.getInstance()
-                                            .getReference("Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/activated")
-                                            .setValue(finalState);
                                 }
+                                FirebaseDatabase.getInstance()
+                                        .getReference("Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/activated")
+                                        .setValue(finalState);
                             }
 
                             @Override
@@ -223,6 +223,7 @@ public class AutomationActivity extends AppCompatActivity {
 
                             }
                         });
+                        break;
                     }
                 }
             }

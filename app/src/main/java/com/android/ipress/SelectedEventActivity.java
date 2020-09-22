@@ -117,6 +117,7 @@ public class SelectedEventActivity extends AppCompatActivity {
 
                             }
                         });
+                        break;
                     }
                 }
             }
@@ -213,6 +214,7 @@ public class SelectedEventActivity extends AppCompatActivity {
 
                             }
                         });
+                        break;
                     }
                 }
             }
@@ -318,6 +320,7 @@ public class SelectedEventActivity extends AppCompatActivity {
 
                             }
                         });
+                        break;
                     }
                 }
             }
