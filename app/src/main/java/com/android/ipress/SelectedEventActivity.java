@@ -67,7 +67,7 @@ public class SelectedEventActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                    if (userSnapshot.child("email").getValue().toString().equals(GlobalClass.CurrentUserEmail)) {
+                    if (userSnapshot.child("email").getValue() != null && userSnapshot.child("email").getValue().toString().equals(GlobalClass.CurrentUserEmail)) {
                         mLoggedInUsername = userSnapshot.child("username").getValue().toString();
                         System.out.println("selected event activity username found :" + mLoggedInUsername);
                         FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Events/" + mSelectedEventName + "/applianceIds").addValueEventListener(new ValueEventListener() {
@@ -195,9 +195,9 @@ public class SelectedEventActivity extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.getValue() != null) {
                                     String ids = snapshot.getValue().toString();
-                                    if(ids.length() == 0){
+                                    if (ids.length() == 0) {
                                         ids = Id + " ";
-                                    }else{
+                                    } else {
                                         ids = ids + Id + " ";
                                     }
                                     String[] count = ids.split(" ");
@@ -251,7 +251,7 @@ public class SelectedEventActivity extends AppCompatActivity {
             holder.RemoveBtnLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(mContext, "" + position, Toast.LENGTH_SHORT).show();
+                    removeApplianceFromEvent(position);
                 }
             });
         }
@@ -273,6 +273,60 @@ public class SelectedEventActivity extends AppCompatActivity {
                 RemoveBtnLayout = itemView.findViewById(R.id.delete_btn);
             }
         }
+    }
+
+    private void removeApplianceFromEvent(int position) {
+        ApplianceInfo applianceInfo = mAddedAppliances.get(position);
+        final String id = applianceInfo.getApplianceId();
+        FirebaseDatabase.getInstance().getReference("Registered Users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                    if (userSnapshot.child("email").getValue().toString().equals(GlobalClass.CurrentUserEmail)) {
+                        mLoggedInUsername = userSnapshot.child("username").getValue().toString();
+                        final String Path = "Registered Users/" + mLoggedInUsername + "/Events/" + mSelectedEventName + "/applianceIds";
+                        FirebaseDatabase.getInstance().getReference(Path).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.getValue() != null) {
+                                    String Ids = snapshot.getValue().toString();
+                                    String[] arr = Ids.split(" ");
+                                    List<String> eventAppIds = new ArrayList<>(Arrays.asList(arr));
+                                    eventAppIds.remove(id);
+                                    Ids = "";
+                                    int i = 0;
+                                    while (i < eventAppIds.size()) {
+                                        if (Ids.length() == 0)
+                                            Ids = eventAppIds.get(i) + " ";
+                                        else
+                                            Ids = Ids + eventAppIds.get(i) + " ";
+                                        i++;
+                                    }
+                                    FirebaseDatabase.getInstance().getReference(Path).setValue(Ids);
+                                    String[] count = Ids.split(" ");
+                                    FirebaseDatabase.getInstance()
+                                            .getReference("Registered Users/" + mLoggedInUsername + "/Events/" + mSelectedEventName + "/deviceCount")
+                                            .setValue(count.length);
+
+                                } else {
+                                    System.out.println("null applianceIds, Activity : SelectedEventActivity Method : removeApplianceFromEvent");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     //method to set up bottom nav bar
