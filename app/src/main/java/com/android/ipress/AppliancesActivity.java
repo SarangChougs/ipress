@@ -385,65 +385,67 @@ public class AppliancesActivity extends AppCompatActivity {
                         FirebaseDatabase.getInstance().getReference(path).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for(DataSnapshot EventSnapshot : snapshot.getChildren()){
+                                for (DataSnapshot EventSnapshot : snapshot.getChildren()) {
                                     String Path;
                                     String Ids = EventSnapshot.child("applianceIds").getValue().toString();
                                     String eventName = EventSnapshot.child("eventName").getValue().toString();
                                     List<String> EventAppIds = new ArrayList<>(Arrays.asList(Ids.split(" ")));
-                                    EventAppIds.remove(applianceId);
-                                    int i = 0;
-                                    Ids = "";
-                                    while (i < EventAppIds.size()) {
-                                        if (Ids.length() == 0)
-                                            Ids = EventAppIds.get(i) + " ";
-                                        else
-                                            Ids = Ids + EventAppIds.get(i) + " ";
-                                        i++;
+                                    if (!Ids.equals("")) {
+                                        EventAppIds.remove(applianceId);
+                                        int i = 0;
+                                        Ids = "";
+                                        while (i < EventAppIds.size()) {
+                                            if (Ids.length() == 0)
+                                                Ids = EventAppIds.get(i) + " ";
+                                            else
+                                                Ids = Ids + EventAppIds.get(i) + " ";
+                                            i++;
+                                        }
+                                        Path = "Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/applianceIds";
+                                        FirebaseDatabase.getInstance().getReference(Path).setValue(Ids);
+                                        String[] count = Ids.split(" ");
+                                        int deviceCount = count.length;
+                                        if (count[0].equals("")) {
+                                            deviceCount -= 1;
+                                        }
+                                        FirebaseDatabase.getInstance()
+                                                .getReference("Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/deviceCount")
+                                                .setValue(deviceCount);
                                     }
-                                    Path = "Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/applianceIds";
-                                    FirebaseDatabase.getInstance().getReference(Path).setValue(Ids);
-                                    String[] count = Ids.split(" ");
-                                    int deviceCount = count.length;
-                                    if(count[0].equals("")){
-                                        deviceCount -= 1;
-                                    }
-                                    FirebaseDatabase.getInstance()
-                                            .getReference("Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/deviceCount")
-                                            .setValue(deviceCount);
                                 }
+                                String path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/Appliances";
+                                DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
+                                reference1.child(Name).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (!task.isSuccessful()) {
+                                            Toast.makeText(AppliancesActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/deviceCount";
+                                            final DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference(Path);
+                                            reference2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if (snapshot.getValue() != null) {
+                                                        int Count = Integer.parseInt(snapshot.getValue().toString());
+                                                        Count--;
+                                                        reference2.setValue(Count);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
 
-                            }
-                        });
-                        path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/Appliances";
-                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(path);
-                        reference1.child(Name).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (!task.isSuccessful()) {
-                                    Toast.makeText(AppliancesActivity.this, "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                } else {
-                                    String Path = "Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName + "/deviceCount";
-                                    final DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference(Path);
-                                    reference2.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            if (snapshot.getValue() != null) {
-                                                int Count = Integer.parseInt(snapshot.getValue().toString());
-                                                Count--;
-                                                reference2.setValue(Count);
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-
-                                        }
-                                    });
-                                }
                             }
                         });
                         break;
