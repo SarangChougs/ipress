@@ -47,6 +47,7 @@ public class HomeActivity extends AppCompatActivity {
     public static RoomInfo SelectedRoomInfo;
     public String TAG = "HomeActivity";
     TextView TotalDeviceCountTV;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,8 +119,8 @@ public class HomeActivity extends AppCompatActivity {
                         return true;
                     case R.id.favourite:
                         ActivityStack.push("Home");
-                        startActivity(new Intent(getApplicationContext(),FavouritesActivity.class));
-                        overridePendingTransition(0,0);
+                        startActivity(new Intent(getApplicationContext(), FavouritesActivity.class));
+                        overridePendingTransition(0, 0);
                         return true;
                 }
                 return false;
@@ -135,8 +136,8 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SelectedRoomInfo = mRooms.get(position);
-                startActivity(new Intent(getApplicationContext(),AppliancesActivity.class));
-                overridePendingTransition(0,0);
+                startActivity(new Intent(getApplicationContext(), AppliancesActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
             }
         });
@@ -150,7 +151,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.child("roomName").getValue() == null) {
                     DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Rooms");
-                    RoomInfo roomInfo = new RoomInfo(mRoomName,0);
+                    RoomInfo roomInfo = new RoomInfo(mRoomName, 0);
                     reference1.child(mRoomName).setValue(roomInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -172,7 +173,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     //update UI with new data set
-    public void updateGridView(){
+    public void updateGridView() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -197,7 +198,7 @@ public class HomeActivity extends AppCompatActivity {
                                     TotalDeviceCount += DeviceCount;
                                 }
                                 String text;
-                                if(TotalDeviceCount == 1)
+                                if (TotalDeviceCount == 1)
                                     text = TotalDeviceCount + " Device";
                                 else
                                     text = TotalDeviceCount + " Devices";
@@ -267,7 +268,7 @@ public class HomeActivity extends AppCompatActivity {
                 });
                 RoomName.setText(info.getRoomName());
                 String text = String.valueOf(info.getDeviceCount());
-                if(text.equals("1"))
+                if (text.equals("1"))
                     text += " Device";
                 else
                     text += " Devices";
@@ -297,41 +298,43 @@ public class HomeActivity extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 final List<String> appIds = new ArrayList<>();
                                 String path;
-                                if(snapshot.hasChildren()){
-                                    for(DataSnapshot iterator : snapshot.getChildren()){
+                                if (snapshot.hasChildren()) {
+                                    for (DataSnapshot iterator : snapshot.getChildren()) {
                                         appIds.add(iterator.child("applianceId").getValue().toString());
                                     }
                                     path = "Registered Users/" + mLoggedInUsername + "/Events";
                                     FirebaseDatabase.getInstance().getReference(path).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            for(DataSnapshot EventSnapshot : snapshot.getChildren()){
+                                            for (DataSnapshot EventSnapshot : snapshot.getChildren()) {
                                                 String Path;
                                                 String Ids = EventSnapshot.child("applianceIds").getValue().toString();
                                                 String eventName = EventSnapshot.child("eventName").getValue().toString();
-                                                List<String> EventAppIds = new ArrayList<>(Arrays.asList(Ids.split(" ")));
-                                                for(int i = 0; i < appIds.size(); i++){
-                                                    EventAppIds.remove(appIds.get(i));
+                                                if (!Ids.equals("")) {
+                                                    List<String> EventAppIds = new ArrayList<>(Arrays.asList(Ids.split(" ")));
+                                                    for (int i = 0; i < appIds.size(); i++) {
+                                                        EventAppIds.remove(appIds.get(i));
+                                                    }
+                                                    int i = 0;
+                                                    Ids = "";
+                                                    while (i < EventAppIds.size()) {
+                                                        if (Ids.length() == 0)
+                                                            Ids = EventAppIds.get(i) + " ";
+                                                        else
+                                                            Ids = Ids + EventAppIds.get(i) + " ";
+                                                        i++;
+                                                    }
+                                                    Path = "Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/applianceIds";
+                                                    FirebaseDatabase.getInstance().getReference(Path).setValue(Ids);
+                                                    String[] count = Ids.split(" ");
+                                                    int deviceCount = count.length;
+                                                    if (count[0].equals("")) {
+                                                        deviceCount -= 1;
+                                                    }
+                                                    FirebaseDatabase.getInstance()
+                                                            .getReference("Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/deviceCount")
+                                                            .setValue(deviceCount);
                                                 }
-                                                int i = 0;
-                                                Ids = "";
-                                                while (i < EventAppIds.size()) {
-                                                    if (Ids.length() == 0)
-                                                        Ids = EventAppIds.get(i) + " ";
-                                                    else
-                                                        Ids = Ids + EventAppIds.get(i) + " ";
-                                                    i++;
-                                                }
-                                                Path = "Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/applianceIds";
-                                                FirebaseDatabase.getInstance().getReference(Path).setValue(Ids);
-                                                String[] count = Ids.split(" ");
-                                                int deviceCount = count.length;
-                                                if(count[0].equals("")){
-                                                    deviceCount -= 1;
-                                                }
-                                                FirebaseDatabase.getInstance()
-                                                        .getReference("Registered Users/" + mLoggedInUsername + "/Events/" + eventName + "/deviceCount")
-                                                        .setValue(deviceCount);
                                             }
                                         }
 

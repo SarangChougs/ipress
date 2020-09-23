@@ -247,7 +247,8 @@ public class AutomationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mDialog.setContentView(R.layout.event_name_getter);
-                mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                if(mDialog.getWindow() != null)
+                    mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                 final EditText NameET = mDialog.findViewById(R.id.NameET);
                 Button Add = mDialog.findViewById(R.id.AddBtn);
                 Add.setOnClickListener(new View.OnClickListener() {
@@ -263,7 +264,7 @@ public class AutomationActivity extends AppCompatActivity {
                                     String email = dataSnapshot.child("email").getValue().toString();
                                     if (email.equals(GlobalClass.CurrentUserEmail)) {
                                         mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                                        //add new appliance method call
+                                        //add new appliance; method call
                                         AddEvent();
                                         break;
                                     }
