@@ -5,16 +5,26 @@ public class EventInfo {
     String DeviceCount;
     String Activated;
     String ApplianceIds;
+    String IconUrl;
 
     public EventInfo() {
         //empty constructor needed
     }
 
-    public EventInfo(String eventName, String deviceCount, String activated, String applianceIds) {
+    public EventInfo(String eventName, String deviceCount, String activated, String applianceIds, String iconUrl) {
         EventName = eventName;
         DeviceCount = deviceCount;
         Activated = activated;
         ApplianceIds = applianceIds;
+        IconUrl = iconUrl;
+    }
+
+    public String getIconUrl() {
+        return IconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        IconUrl = iconUrl;
     }
 
     public String getApplianceIds() {

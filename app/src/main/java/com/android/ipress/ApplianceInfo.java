@@ -4,18 +4,27 @@ public class ApplianceInfo {
     String applianceId;
     int State, Favourite;
     String Name,Parent;
+    String IconUrl;
 
     public ApplianceInfo() {
         //empty constructor needed
     }
 
-
-    public ApplianceInfo(String applianceId, int state, int favourite, String name, String parent) {
+    public ApplianceInfo(String applianceId, int state, int favourite, String name, String parent, String iconUrl) {
         this.applianceId = applianceId;
         State = state;
         Favourite = favourite;
         Name = name;
         Parent = parent;
+        IconUrl = iconUrl;
+    }
+
+    public String getIconUrl() {
+        return IconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        IconUrl = iconUrl;
     }
 
     public String getApplianceId() {

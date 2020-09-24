@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/filter_drawable"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <RelativeLayout
+            android:id="@+id/ImageParentLayout"
+            android:layout_width="132dp"
+            android:layout_height="132dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/profile_image_shape">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3.9dp"
+                android:layout_marginTop="3.7dp"
+                app:cardCornerRadius="62dp">
+
+                <ImageView
+                    android:id="@+id/DialogIcon"
+                    android:layout_width="124dp"
+                    android:layout_height="124dp"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/image_icon" />
+
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/ChooseIconBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:background="@drawable/select_icon_drawable"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:fontFamily="@font/baloo"
+            android:textSize="15sp"
+            android:text="Choose Icon" />
+
+        <TextView
+            android:id="@+id/lbl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="center_horizontal"
+            android:text="Enter Event name"
+            android:textColor="@color/rich_black"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/NameET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/login_input_field_container"
+            android:fontFamily="@font/baloo"
+            android:hint="name"
+            android:inputType="textPostalAddress"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:textColor="@color/rich_black"
+            android:textColorHint="@color/dark_grey" />
+
+        <Button
+            android:id="@+id/AddBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@drawable/button"
+            android:fontFamily="@font/baloo"
+            android:text="ADD"
+            android:alpha="0.2"
+            android:clickable="false"
+            android:textColor="@color/app_primary_color"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -14,11 +14,9 @@
 
         <ImageView
             android:id="@+id/ApplianceIcon"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/folder_vector"
-            android:layout_marginTop="20dp"
-            app:tint="@color/rich_black"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_below="@id/DeleteBtn"
             android:layout_centerHorizontal="true" />
 
         <ImageView

@@ -1,6 +1,7 @@
 package com.android.ipress;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
@@ -10,6 +11,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,13 +26,12 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,18 +44,26 @@ public class AutomationActivity extends AppCompatActivity {
     List<EventInfo> mEvents = new ArrayList<>();
     FloatingActionButton floatingActionButton;
     Dialog mDialog;
-    String mEventName;
+    String mEventName, mIconUrl;
     SliderAdapter sliderAdapter;
     public static EventInfo SelectedEventInfo;
-    public String TAG = "HomeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_automation);
+        GlobalClass.iconUrl = "";
+        GlobalClass.eventName = "";
         setupBottomNavBar();
         setupViewPager();
-        setupAddEvent();
+        setupAddEventDialog();
+        floatingActionButton = findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDialog.show();
+            }
+        });
     }
 
     //initialize grid view
@@ -81,6 +91,7 @@ public class AutomationActivity extends AppCompatActivity {
                                     eventInfo.setEventName(eventSnapshot.child("eventName").getValue().toString());
                                     eventInfo.setActivated(eventSnapshot.child("activated").getValue().toString());
                                     eventInfo.setApplianceIds(eventSnapshot.child("applianceIds").getValue().toString());
+                                    eventInfo.setIconUrl(eventSnapshot.child("iconUrl").getValue().toString());
                                     mEvents.add(eventInfo);
                                 }
                                 sliderAdapter = new SliderAdapter(getApplicationContext(), mEvents);
@@ -139,15 +150,28 @@ public class AutomationActivity extends AppCompatActivity {
 
             EventInfo eventInfo = mList.get(position);
 
-            EventIcon.setImageResource(R.drawable.event);
+            Picasso.with(AutomationActivity.this)
+                    .load(eventInfo.getIconUrl())
+                    .placeholder(R.drawable.event)
+                    .into(EventIcon);
+
             EventName.setText(eventInfo.getEventName());
-            if(eventInfo.getDeviceCount().equals("1")){
+            if (eventInfo.getDeviceCount().equals("1")) {
                 DeviceCount.setText(eventInfo.getDeviceCount() + " Device");
-            }else{
+            } else {
                 DeviceCount.setText(eventInfo.getDeviceCount() + " Devices");
             }
 
             EventIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SelectedEventInfo = mEvents.get(position);
+                    startActivity(new Intent(getApplicationContext(), SelectedEventActivity.class));
+                    overridePendingTransition(0, 0);
+                }
+            });
+
+            EventName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     SelectedEventInfo = mEvents.get(position);
@@ -207,10 +231,10 @@ public class AutomationActivity extends AppCompatActivity {
                                 for (DataSnapshot roomSnapshot : AllRoomsSnapshot.getChildren()) {
                                     String roomName = roomSnapshot.child("roomName").getValue().toString();
                                     DataSnapshot applianceSnapShot = roomSnapshot.child("Appliances");
-                                    for(DataSnapshot iterator : applianceSnapShot.getChildren()){
+                                    for (DataSnapshot iterator : applianceSnapShot.getChildren()) {
                                         String applianceName = iterator.child("name").getValue().toString();
                                         String id = iterator.child("applianceId").getValue().toString();
-                                        if(applianceIds.contains(id)){
+                                        if (applianceIds.contains(id)) {
                                             FirebaseDatabase.getInstance()
                                                     .getReference("Registered Users/" + mLoggedInUsername + "/Rooms/" + roomName + "/Appliances/" + applianceName + "/state")
                                                     .setValue(finalState);
@@ -239,49 +263,97 @@ public class AutomationActivity extends AppCompatActivity {
         });
     }
 
-    //method to set up variables for add event fab, references, etc
-    public void setupAddEvent() {
+    //method to set up add event dialog
+    public void setupAddEventDialog() {
         mDialog = new Dialog(this);
-        floatingActionButton = findViewById(R.id.fab);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        mDialog.setContentView(R.layout.name_getter);
+        if (mDialog.getWindow() != null)
+            mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        final EditText NameET = mDialog.findViewById(R.id.NameET);
+        final Button Add = mDialog.findViewById(R.id.AddBtn);
+        TextView lbl = mDialog.findViewById(R.id.lbl);
+        lbl.setText("Enter Event Name");
+        ImageView Icon = mDialog.findViewById(R.id.DialogIcon);
+        Button ChooseIcon = mDialog.findViewById(R.id.ChooseIconBtn);
+        NameET.setText(GlobalClass.eventName);
+        if (!GlobalClass.iconUrl.isEmpty()){
+            Picasso.with(AutomationActivity.this)
+                    .load(GlobalClass.iconUrl)
+                    .placeholder(R.drawable.image_icon)
+                    .into(Icon);
+            if(NameET.getText().toString().trim().length() != 0){
+                Add.setAlpha(1);
+                Add.setClickable(true);
+            }
+        }
+        ChooseIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDialog.setContentView(R.layout.event_name_getter);
-                if(mDialog.getWindow() != null)
-                    mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                final EditText NameET = mDialog.findViewById(R.id.NameET);
-                Button Add = mDialog.findViewById(R.id.AddBtn);
-                Add.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mEventName = NameET.getText().toString().trim().toLowerCase();
-                        //to get the username for currently logged in user's username
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
-                        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                    String email = dataSnapshot.child("email").getValue().toString();
-                                    if (email.equals(GlobalClass.CurrentUserEmail)) {
-                                        mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                                        //add new appliance; method call
-                                        AddEvent();
-                                        break;
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-                        mDialog.dismiss();
-                    }
-                });
-                mDialog.show();
+                GlobalClass.eventName = NameET.getText().toString().trim();
+                mDialog.dismiss();
+                startActivityForResult(new Intent(getApplicationContext(), IconSelector.class), 1);
             }
         });
+
+        NameET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() != 0 && !GlobalClass.iconUrl.equals("")) {
+                    Add.setAlpha(1);
+                    Add.setClickable(true);
+                } else {
+                    Add.setAlpha(0.2f);
+                    Add.setClickable(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        Add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEventName = NameET.getText().toString().trim().toLowerCase();
+                mIconUrl = GlobalClass.iconUrl;
+                //to get the username for currently logged in user's username
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            String email = dataSnapshot.child("email").getValue().toString();
+                            if (email.equals(GlobalClass.CurrentUserEmail)) {
+                                mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
+                                //add new appliance; method call
+                                AddEvent();
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                mDialog.dismiss();
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        setupAddEventDialog();
+        mDialog.show();
     }
 
     //method to add event
@@ -292,10 +364,11 @@ public class AutomationActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.child("eventName").getValue() == null) {
                     DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Events");
-                    EventInfo eventInfo = new EventInfo(mEventName, String.valueOf(0), "0", "");
+                    EventInfo eventInfo = new EventInfo("" + mEventName, "0", "0", "", mIconUrl);
                     reference1.child(mEventName).setValue(eventInfo);
                 } else {
                     Toast.makeText(AutomationActivity.this, "Event already exists", Toast.LENGTH_SHORT).show();
+                    mDialog.show();
                 }
             }
 

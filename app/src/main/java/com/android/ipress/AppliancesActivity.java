@@ -4,8 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,11 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -27,25 +27,25 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class AppliancesActivity extends AppCompatActivity {
-
-    private static final String TAG = "Appliances";
     String mLoggedInUsername;
     List<ApplianceInfo> mAppliances;
     FloatingActionButton floatingActionButton;
     Dialog mDialog;
-    String mApplianceName;
+    String mApplianceName, mIconUrl;
     GridView mGridView;
     ApplianceAdapter mAdapter;
     RoomInfo mRoomInfo;
@@ -55,8 +55,8 @@ public class AppliancesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appliances);
-
-        mDialog = new Dialog(this);
+        GlobalClass.iconUrl = "";
+        GlobalClass.applianceName = "";
         mAppliances = new ArrayList<>();
         mRoomInfo = HomeActivity.SelectedRoomInfo;
         if (mRoomInfo != null)
@@ -64,49 +64,103 @@ public class AppliancesActivity extends AppCompatActivity {
         TextView RoomLbl = findViewById(R.id.room_lbl);
         RoomLbl.setText(mRoomName);
 
+        setupAddApplianceDialog();
         //floating action button to add new appliance
         floatingActionButton = findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDialog.setContentView(R.layout.appliance_name_getter);
-                mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                final EditText NameET = mDialog.findViewById(R.id.NameET);
-                Button Add = mDialog.findViewById(R.id.AddBtn);
-                Add.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mApplianceName = NameET.getText().toString().trim().toLowerCase();
-                        System.out.println("into add function");
-                        //to get the username for currently logged in user's username
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
-                        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                    String email = dataSnapshot.child("email").getValue().toString();
-                                    if (email.equals(GlobalClass.CurrentUserEmail)) {
-                                        mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                                        //add new appliance method call
-                                        AddAppliances();
-                                        break;
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-                        mDialog.dismiss();
-                    }
-                });
                 mDialog.show();
             }
         });
         setupGridView();
         setupBottomNavBar();
+    }
+
+    //method to set up add event dialog
+    public void setupAddApplianceDialog() {
+        mDialog = new Dialog(this);
+        mDialog.setContentView(R.layout.name_getter);
+        if (mDialog.getWindow() != null)
+            mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        final EditText NameET = mDialog.findViewById(R.id.NameET);
+        final Button Add = mDialog.findViewById(R.id.AddBtn);
+        TextView lbl = mDialog.findViewById(R.id.lbl);
+        lbl.setText("Enter Appliance Name");
+        ImageView Icon = mDialog.findViewById(R.id.DialogIcon);
+        Button ChooseIcon = mDialog.findViewById(R.id.ChooseIconBtn);
+        NameET.setText(GlobalClass.applianceName);
+        if (!GlobalClass.iconUrl.isEmpty()) {
+            Picasso.with(AppliancesActivity.this)
+                    .load(GlobalClass.iconUrl)
+                    .placeholder(R.drawable.image_icon)
+                    .into(Icon);
+            if (NameET.getText().toString().trim().length() != 0) {
+                Add.setAlpha(1);
+                Add.setClickable(true);
+            }
+        }
+        ChooseIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GlobalClass.applianceName = NameET.getText().toString().trim();
+                mDialog.dismiss();
+                startActivityForResult(new Intent(getApplicationContext(), IconSelector.class), 1);
+            }
+        });
+
+        NameET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() != 0 && !GlobalClass.iconUrl.equals("")) {
+                    Add.setAlpha(1);
+                    Add.setClickable(true);
+                } else {
+                    Add.setAlpha(0.2f);
+                    Add.setClickable(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        Add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mApplianceName = NameET.getText().toString().trim().toLowerCase();
+                mIconUrl = GlobalClass.iconUrl;
+                //to get the username for currently logged in user's username
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            String email = dataSnapshot.child("email").getValue().toString();
+                            if (email.equals(GlobalClass.CurrentUserEmail)) {
+                                mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
+                                //add new room's method call
+                                AddAppliances();
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                mDialog.dismiss();
+            }
+        });
     }
 
     //add new appliance method definition
@@ -126,7 +180,12 @@ public class AppliancesActivity extends AppCompatActivity {
                                 id++;
                                 idStr = id + "";
                                 String parent = mRoomName;
-                                ApplianceInfo applianceInfo = new ApplianceInfo(idStr, 0, 0, mApplianceName, parent);
+                                ApplianceInfo applianceInfo = new ApplianceInfo("" + idStr,
+                                        0,
+                                        0,
+                                        "" + mApplianceName,
+                                        "" + parent,
+                                        "" + mIconUrl);
                                 //increment appliance id count
                                 FirebaseDatabase.getInstance().getReference("counts/applianceId").setValue(idStr);
                                 //add appliance to database
@@ -204,6 +263,7 @@ public class AppliancesActivity extends AppCompatActivity {
                                     applianceInfo.setName(postSnapshot.child("name").getValue().toString());
                                     applianceInfo.setState(postSnapshot.child("state").getValue().toString());
                                     applianceInfo.setFavourite(Integer.parseInt(postSnapshot.child("favourite").getValue().toString()));
+                                    applianceInfo.setIconUrl(postSnapshot.child("iconUrl").getValue().toString());
                                     mAppliances.add(applianceInfo);
                                 }
                                 mAdapter = new ApplianceAdapter(AppliancesActivity.this, mAppliances);
@@ -273,17 +333,12 @@ public class AppliancesActivity extends AppCompatActivity {
                 } else {
                     FavouriteBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.favourite_not_selected));
                 }
-                if (info.getState() == 1) {
-                    ApplianceIcon.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.flash_on_vector));
-                    ChangeBtn.setText("OFF");
-                    ChangeBtn.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.grid_off_btn_drawable));
-                    ChangeBtn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.rich_black));
-                } else {
-                    ApplianceIcon.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.flash_off_vector));
-                    ChangeBtn.setText("ON");
-                    ChangeBtn.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.grid_on_btn_drawable));
-                    ChangeBtn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.app_primary_color));
-                }
+
+                Picasso.with(AppliancesActivity.this)
+                        .load(info.getIconUrl())
+                        .placeholder(R.drawable.image_icon)
+                        .into(ApplianceIcon);
+
                 ApplianceName.setText(info.getName());
 
                 ChangeBtn.setOnClickListener(new View.OnClickListener() {
@@ -531,6 +586,13 @@ public class AppliancesActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        setupAddApplianceDialog();
+        mDialog.show();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.android.ipress;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
@@ -8,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +33,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +47,7 @@ public class HomeActivity extends AppCompatActivity {
     RoomAdapter mAdapter;
     FloatingActionButton floatingActionButton;
     Dialog mDialog;
-    String mRoomName;
+    String mRoomName, mIconUrl;
     public static RoomInfo SelectedRoomInfo;
     public String TAG = "HomeActivity";
     TextView TotalDeviceCountTV;
@@ -52,47 +56,17 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        GlobalClass.iconUrl = "";
+        GlobalClass.roomName = "";
         TotalDeviceCountTV = findViewById(R.id.TotalDeviceCount);
         ActivityStack.setEmpty();
         setupBottomNavBar();
         setupGridView();
-        mDialog = new Dialog(this);
+        setupAddRoomDialog();
         floatingActionButton = findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDialog.setContentView(R.layout.room_name_getter);
-                mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                final EditText NameET = mDialog.findViewById(R.id.NameET);
-                Button Add = mDialog.findViewById(R.id.AddBtn);
-                Add.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mRoomName = NameET.getText().toString().trim().toLowerCase();
-                        //to get the username for currently logged in user's username
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
-                        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                    String email = dataSnapshot.child("email").getValue().toString();
-                                    if (email.equals(GlobalClass.CurrentUserEmail)) {
-                                        mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
-                                        //add new appliance method call
-                                        AddRoom();
-                                        break;
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-                        mDialog.dismiss();
-                    }
-                });
                 mDialog.show();
             }
         });
@@ -143,6 +117,92 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    //method to set up add event dialog
+    public void setupAddRoomDialog() {
+        mDialog = new Dialog(this);
+        mDialog.setContentView(R.layout.name_getter);
+        if (mDialog.getWindow() != null)
+            mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        final EditText NameET = mDialog.findViewById(R.id.NameET);
+        final Button Add = mDialog.findViewById(R.id.AddBtn);
+        TextView lbl = mDialog.findViewById(R.id.lbl);
+        lbl.setText("Enter Room Name");
+        ImageView Icon = mDialog.findViewById(R.id.DialogIcon);
+        Button ChooseIcon = mDialog.findViewById(R.id.ChooseIconBtn);
+        NameET.setText(GlobalClass.roomName);
+        if (!GlobalClass.iconUrl.isEmpty()){
+            Picasso.with(HomeActivity.this)
+                    .load(GlobalClass.iconUrl)
+                    .placeholder(R.drawable.image_icon)
+                    .into(Icon);
+            if(NameET.getText().toString().trim().length() != 0){
+                Add.setAlpha(1);
+                Add.setClickable(true);
+            }
+        }
+        ChooseIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GlobalClass.roomName = NameET.getText().toString().trim();
+                mDialog.dismiss();
+                startActivityForResult(new Intent(getApplicationContext(), IconSelector.class), 1);
+            }
+        });
+
+        NameET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() != 0 && !GlobalClass.iconUrl.equals("")) {
+                    Add.setAlpha(1);
+                    Add.setClickable(true);
+                } else {
+                    Add.setAlpha(0.2f);
+                    Add.setClickable(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        Add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRoomName = NameET.getText().toString().trim().toLowerCase();
+                mIconUrl = GlobalClass.iconUrl;
+                //to get the username for currently logged in user's username
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users");
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            String email = dataSnapshot.child("email").getValue().toString();
+                            if (email.equals(GlobalClass.CurrentUserEmail)) {
+                                mLoggedInUsername = dataSnapshot.child("username").getValue().toString();
+                                //add new room's method call
+                                AddRoom();
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                mDialog.dismiss();
+            }
+        });
+    }
+
     //add new appliance method definition
     public void AddRoom() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Rooms/" + mRoomName);
@@ -151,7 +211,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.child("roomName").getValue() == null) {
                     DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Registered Users/" + mLoggedInUsername + "/Rooms");
-                    RoomInfo roomInfo = new RoomInfo(mRoomName, 0);
+                    RoomInfo roomInfo = new RoomInfo("" + mRoomName, 0, "" + mIconUrl);
                     reference1.child(mRoomName).setValue(roomInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -194,6 +254,7 @@ public class HomeActivity extends AppCompatActivity {
                                     int DeviceCount = Integer.parseInt(RoomSnapshot.child("deviceCount").getValue().toString());
                                     roomInfo.setRoomName(RoomName);
                                     roomInfo.setDeviceCount(DeviceCount);
+                                    roomInfo.setIconUrl(RoomSnapshot.child("iconUrl").getValue().toString());
                                     mRooms.add(roomInfo);
                                     TotalDeviceCount += DeviceCount;
                                 }
@@ -256,9 +317,15 @@ public class HomeActivity extends AppCompatActivity {
             RoomInfo info = list.get(position);
             if (convertView == null) {
                 grid = layoutInflater.inflate(R.layout.room_grid_item, null);
+                ImageView ApplianceIcon = grid.findViewById(R.id.ApplianceIcon);
                 TextView RoomName = grid.findViewById(R.id.RoomName);
                 TextView DeviceCount = grid.findViewById(R.id.DeviceCount);
                 ImageView DeleteRoom = grid.findViewById(R.id.DeleteBtn);
+
+                Picasso.with(HomeActivity.this)
+                        .load(info.getIconUrl())
+                        .placeholder(R.drawable.image_icon)
+                        .into(ApplianceIcon);
 
                 DeleteRoom.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -363,6 +430,13 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        setupAddRoomDialog();
+        mDialog.show();
     }
 
     @Override

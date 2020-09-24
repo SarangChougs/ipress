@@ -39,7 +39,6 @@ public class ProfileActivity extends AppCompatActivity {
     String TAG = "ProfileActivity";
     TextView NameTV, EmailTV, UsernameTV;
     Button mEditPic, mChooseAgain;
-    public static final int PICK_FILE_REQUEST = 1;
     Uri mImageUri;
     ImageView ProfilePic;
 
@@ -65,13 +64,17 @@ public class ProfileActivity extends AppCompatActivity {
                         .placeholder(R.drawable.user_vector)
                         .into(ProfilePic);
                 mEditPic.setText("Update");
+                mEditPic.setClickable(true);
                 mChooseAgain.setVisibility(View.VISIBLE);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 Toast.makeText(this, "Failed to select image Error : " + error , Toast.LENGTH_SHORT).show();
+                mEditPic.setClickable(false);
             }
-        } else
+        } else{
             Toast.makeText(this, "Failed to select image", Toast.LENGTH_SHORT).show();
+            mEditPic.setClickable(false);
+        }
     }
 
     //method to display user info
@@ -133,6 +136,7 @@ public class ProfileActivity extends AppCompatActivity {
                             .start(ProfileActivity.this);
                 } else if (mEditPic.getText().toString().equals("Update")) {
                     mEditPic.setText("Updating...");
+                    mEditPic.setClickable(false);
                     updateProfilePic();
                 }
             }
@@ -149,6 +153,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     //method to update selected picture
     public void updateProfilePic() {
+        mChooseAgain.setVisibility(View.GONE);
         mUsername = UsernameTV.getText().toString();
         String FileName = mUsername + "_profile_pic." + getFileExtension(mImageUri);
         StorageReference storageReference = FirebaseStorage.getInstance().getReference("profile_pictures/" + mUsername + "/" + FileName);
@@ -168,10 +173,12 @@ public class ProfileActivity extends AppCompatActivity {
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if (task.isSuccessful()) {
                                                             mEditPic.setText("Choose picture");
+                                                            mEditPic.setClickable(true);
                                                             mChooseAgain.setVisibility(View.GONE);
                                                         } else {
                                                             Toast.makeText(ProfileActivity.this, "Failed to update profile picture", Toast.LENGTH_SHORT).show();
                                                             mEditPic.setText("Update");
+                                                            mEditPic.setClickable(true);
                                                         }
                                                     }
                                                 });

@@ -3,14 +3,25 @@ package com.android.ipress;
 public class RoomInfo {
     String RoomName;
     int DeviceCount;
+    String iconUrl;
 
     //empty constructor needed
     public RoomInfo(){
 
     }
-    public RoomInfo(String roomName, int deviceCount) {
+
+    public RoomInfo(String roomName, int deviceCount, String iconUrl) {
         RoomName = roomName;
         DeviceCount = deviceCount;
+        this.iconUrl = iconUrl;
+    }
+
+    public String getIconUrl() {
+        return iconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
     }
 
     public void setRoomName(String roomName) {
