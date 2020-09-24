@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -12,20 +13,30 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.ipress.GlobalClass;
+import com.android.ipress.IconSelector;
 import com.android.ipress.ProfileActivity;
 import com.android.ipress.R;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.UploadTask;
@@ -39,6 +50,7 @@ import java.io.File;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 
 public class Uploader extends AppCompatActivity {
 
@@ -158,7 +170,7 @@ public class Uploader extends AppCompatActivity {
         int hdp = (imageHeight * 160) / mf;
         int wdp = (imageWidth * 160) / mf;
 
-        String Text = "" + hdp + " x " + wdp  + " cropped image (Units - dp)";
+        String Text = "" + hdp + " x " + wdp + " cropped image (Units - dp)";
 
         TextView textView = findViewById(R.id.dimen);
         textView.setText(Text);

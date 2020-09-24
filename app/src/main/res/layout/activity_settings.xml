@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/app_primary_color"
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
 
@@ -33,6 +34,7 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/nav_bar"
@@ -111,6 +113,17 @@
             android:background="@color/faint_gray" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/hiddenBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:text="open"
+        android:textSize="25sp"
+        android:textColor="@color/app_primary_color"
+        android:background="@color/app_primary_color"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
