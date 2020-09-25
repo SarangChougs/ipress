@@ -31,6 +31,8 @@
     <color name="no_results_msg_color">#6B788B</color>
     <color name="drive_status_color">#818EE4</color>
     <color name="blue">#191970</color>
+    <color name="logo_first">#7B63FF</color>
+    <color name="logo_second">#74DFEF</color>
     <color name="admin_login_bg_color">#D2FFF9</color>
     <color name="confirm_date_btn_color">#03DAC5</color>
 </resources>

@@ -7,48 +7,30 @@
     android:background="@color/white"
     tools:context=".SplashScreen">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+    <View
+        android:id="@+id/top_line"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:layout_above="@id/logo"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/logo_first_drawable" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <View
+        android:id="@+id/bottom_line"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:layout_below="@id/logo"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/logo_second_drawable"  />
 
-            <ImageView
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/just_logo_splash" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/baloo"
-                android:gravity="center_horizontal"
-                android:text="iPress"
-                android:textColor="@color/black"
-                android:textSize="35sp" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp">
-
-                <com.agrawalsuneet.dotsloader.loaders.TrailingCircularDotsLoader
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:trailingcircular_animDelay="200"
-                    app:trailingcircular_animDuration="1200"
-                    app:trailingcircular_bigCircleRadius="40dp"
-                    app:trailingcircular_dotsColor="@color/black"
-                    app:trailingcircular_dotsRadius="11dp"
-                    android:layout_centerInParent="true"
-                    app:trailingcircular_noOfTrailingDots="5" />
-            </RelativeLayout>
-        </LinearLayout>
-    </RelativeLayout>
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/just_logo_splash" />
 
 </RelativeLayout>
