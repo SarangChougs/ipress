@@ -5,6 +5,8 @@
         <item name="colorPrimary">@color/app_primary_color</item>
         <item name="colorPrimaryDark">@color/rich_black</item>
         <item name="colorAccent">@color/rich_black</item>
+
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
 </resources>

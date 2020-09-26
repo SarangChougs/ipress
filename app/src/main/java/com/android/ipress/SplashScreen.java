@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.media.Image;
+import android.net.http.SslCertificate;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -20,24 +22,31 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
         GlobalClass.setMapping();
-
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         View top = findViewById(R.id.top_line), bottom = findViewById(R.id.bottom_line);
-        ImageView imageView = findViewById(R.id.logo);
-        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.splash_rotator);
-        Animation topA = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.top_line_anim);
-        Animation bottomA = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.bottom_line_anim);
+        final ImageView imageView = findViewById(R.id.logo);
+        Animation alpha = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.splash_alpha);
+        Animation topA = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.top_line_anim);
+        Animation bottomA = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.bottom_line_anim);
         top.startAnimation(topA);
         bottom.startAnimation(bottomA);
-        imageView.startAnimation(animation);
+        imageView.startAnimation(alpha);
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                Animation rotate = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.splash_rotator);
+                imageView.startAnimation(rotate);
+            }
+        }, 1200);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 finish();
             }
-        },2000);
+        }, 4000);
     }
 
     @Override

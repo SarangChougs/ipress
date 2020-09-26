@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -110,7 +112,10 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SelectedRoomInfo = mRooms.get(position);
-                startActivity(new Intent(getApplicationContext(), AppliancesActivity.class));
+                Intent intent = new Intent(getApplicationContext(), AppliancesActivity.class);
+                Pair pair = new Pair<View, String>(mGridView, "room");
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(HomeActivity.this, pair);
+                startActivity(intent, options.toBundle());
                 overridePendingTransition(0, 0);
                 finish();
             }
@@ -130,12 +135,12 @@ public class HomeActivity extends AppCompatActivity {
         ImageView Icon = mDialog.findViewById(R.id.DialogIcon);
         Button ChooseIcon = mDialog.findViewById(R.id.ChooseIconBtn);
         NameET.setText(GlobalClass.roomName);
-        if (!GlobalClass.iconUrl.isEmpty()){
+        if (!GlobalClass.iconUrl.isEmpty()) {
             Picasso.with(HomeActivity.this)
                     .load(GlobalClass.iconUrl)
                     .placeholder(R.drawable.image_icon)
                     .into(Icon);
-            if(NameET.getText().toString().trim().length() != 0){
+            if (NameET.getText().toString().trim().length() != 0) {
                 Add.setAlpha(1);
                 Add.setClickable(true);
             }

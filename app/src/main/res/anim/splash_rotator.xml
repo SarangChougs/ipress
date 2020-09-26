@@ -6,14 +6,7 @@
         android:fromDegrees="0"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:repeatCount="infinite"
+        android:repeatCount="5"
         android:repeatMode="restart"
         android:toDegrees="360" />
-
-    <alpha
-        android:duration="800"
-        android:fromAlpha="0"
-        android:repeatCount="infinite"
-        android:repeatMode="reverse"
-        android:toAlpha="1" />
 </set>

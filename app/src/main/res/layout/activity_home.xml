@@ -75,6 +75,7 @@
         android:layout_above="@id/nav_bar"
         android:horizontalSpacing="25dp"
         android:numColumns="2"
+        android:transitionName="room"
         android:stretchMode="columnWidth"
         android:verticalSpacing="25dp"/>
 

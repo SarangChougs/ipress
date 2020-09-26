@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +80,7 @@ public class FavouritesActivity extends AppCompatActivity {
                                         applianceInfo.setState(iterator.child("state").getValue().toString());
                                         applianceInfo.setParent(iterator.child("parent").getValue().toString());
                                         applianceInfo.setFavourite(Integer.parseInt(iterator.child("favourite").getValue().toString()));
+                                        applianceInfo.setIconUrl(iterator.child("iconUrl").getValue().toString());
                                         if(applianceInfo.getFavourite() == 1)
                                             mAppliances.add(applianceInfo);
                                     }
@@ -145,18 +147,21 @@ public class FavouritesActivity extends AppCompatActivity {
                 ChangeBtn = grid.findViewById(R.id.ChangeBtn);
                 FavouriteBtn = grid.findViewById(R.id.FavouriteBtn);
 
+                Picasso.with(mContext)
+                        .load(info.getIconUrl())
+                        .placeholder(R.drawable.image_icon)
+                        .into(ApplianceIcon);
+
                 if (info.getFavourite() == 1) {
                     FavouriteBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.favourite_selected));
                 } else {
                     FavouriteBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.favourite_not_selected));
                 }
                 if (info.getState() == 1) {
-                    ApplianceIcon.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.flash_on_vector));
                     ChangeBtn.setText("OFF");
                     ChangeBtn.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.grid_off_btn_drawable));
                     ChangeBtn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.rich_black));
                 } else {
-                    ApplianceIcon.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.flash_off_vector));
                     ChangeBtn.setText("ON");
                     ChangeBtn.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.grid_on_btn_drawable));
                     ChangeBtn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.app_primary_color));

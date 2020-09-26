@@ -32,6 +32,7 @@
                     android:layout_width="124dp"
                     android:layout_height="124dp"
                     android:scaleType="centerCrop"
+                    android:transitionName="choose_icon"
                     app:srcCompat="@drawable/image_icon" />
 
             </androidx.cardview.widget.CardView>
